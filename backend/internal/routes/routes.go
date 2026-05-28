@@ -2,12 +2,16 @@ package routes
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
 	"github.com/allesgut7/web-my-porto/backend/internal/config"
+	"github.com/allesgut7/web-my-porto/backend/internal/handlers"
 	"github.com/allesgut7/web-my-porto/backend/internal/middleware"
+	"github.com/allesgut7/web-my-porto/backend/internal/repositories"
+	"github.com/allesgut7/web-my-porto/backend/internal/services"
 	"github.com/allesgut7/web-my-porto/backend/internal/utils"
 )
 
@@ -22,18 +26,21 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *gin.Engine {
 	router.Use(middleware.RequestLogger())
 	router.Use(middleware.CORS(cfg))
 
+	userRepository := repositories.NewUserRepository(db)
+	authService := services.NewAuthService(cfg, userRepository)
+	authHandler := handlers.NewAuthHandler(cfg, authService)
+
+	loginRateLimiter := middleware.NewInMemoryRateLimiter(5, 10*time.Minute)
+
 	api := router.Group("/api")
 	{
 		api.GET("/health", HealthCheckHandler(cfg, db))
 
-		// Auth routes will be implemented in Phase 4.
 		auth := api.Group("/auth")
 		{
-			auth.GET("/placeholder", func(ctx *gin.Context) {
-				utils.SuccessResponse(ctx, http.StatusOK, "Auth route placeholder", gin.H{
-					"next": "Phase 4 Authentication API",
-				})
-			})
+			auth.POST("/login", loginRateLimiter.Middleware(), authHandler.Login)
+			auth.POST("/logout", middleware.AuthMiddleware(cfg), authHandler.Logout)
+			auth.GET("/me", middleware.AuthMiddleware(cfg), authHandler.Me)
 		}
 
 		// Public routes will be implemented in Phase 5.
@@ -49,7 +56,7 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *gin.Engine {
 			})
 		})
 
-		// Admin routes will be implemented in Phase 6.
+		// Admin routes will be extended in Phase 6.
 		admin := api.Group("/admin")
 		admin.Use(middleware.AuthMiddleware(cfg))
 		{

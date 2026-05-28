@@ -1,6 +1,10 @@
 package utils
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
 
 type AppError struct {
 	StatusCode int
@@ -60,26 +64,12 @@ func NewValidationError(errors map[string]string) *AppError {
 	return NewAppError(http.StatusUnprocessableEntity, "Validation error", errors)
 }
 
-func HandleAppError(ctx interface {
-	JSON(code int, obj interface{})
-}, err error) {
+func HandleAppError(ctx *gin.Context, err error) {
 	appErr, ok := err.(*AppError)
 	if !ok {
-		ctx.JSON(http.StatusInternalServerError, APIResponse{
-			Success: false,
-			Message: "Internal server error",
-		})
+		InternalServerErrorResponse(ctx)
 		return
 	}
 
-	response := APIResponse{
-		Success: false,
-		Message: appErr.Message,
-	}
-
-	if appErr.Errors != nil {
-		response.Errors = appErr.Errors
-	}
-
-	ctx.JSON(appErr.StatusCode, response)
+	ErrorResponse(ctx, appErr.StatusCode, appErr.Message, appErr.Errors)
 }
