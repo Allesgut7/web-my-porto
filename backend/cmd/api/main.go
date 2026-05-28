@@ -1,48 +1,26 @@
 package main
 
 import (
-	"net/http"
-	"os"
+	"log"
 
-	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
+	"github.com/allesgut7/web-my-porto/backend/internal/config"
+	"github.com/allesgut7/web-my-porto/backend/internal/database"
+	"github.com/allesgut7/web-my-porto/backend/internal/routes"
 )
 
 func main() {
-	_ = godotenv.Load()
+	cfg := config.Load()
 
-	appEnv := getEnv("APP_ENV", "development")
-	appPort := getEnv("APP_PORT", "8080")
-
-	if appEnv == "production" {
-		gin.SetMode(gin.ReleaseMode)
+	db, err := database.NewPostgresConnection(cfg)
+	if err != nil {
+		log.Fatalf("failed to initialize database: %v", err)
 	}
 
-	router := gin.Default()
+	router := routes.SetupRouter(cfg, db)
 
-	api := router.Group("/api")
-	{
-		api.GET("/health", func(ctx *gin.Context) {
-			ctx.JSON(http.StatusOK, gin.H{
-				"success": true,
-				"message": "Backend service is healthy",
-				"data": gin.H{
-					"service": "web-my-porto-api",
-					"env":     appEnv,
-				},
-			})
-		})
-	}
+	log.Printf("server running on port %s in %s mode", cfg.AppPort, cfg.AppEnv)
 
-	if err := router.Run(":" + appPort); err != nil {
-		panic(err)
+	if err := router.Run(":" + cfg.AppPort); err != nil {
+		log.Fatalf("failed to run server: %v", err)
 	}
-}
-
-func getEnv(key string, fallback string) string {
-	value := os.Getenv(key)
-	if value == "" {
-		return fallback
-	}
-	return value
 }
