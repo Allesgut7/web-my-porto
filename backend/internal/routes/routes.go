@@ -30,6 +30,14 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *gin.Engine {
 	authService := services.NewAuthService(cfg, userRepository)
 	authHandler := handlers.NewAuthHandler(cfg, authService)
 
+	profileRepository := repositories.NewProfileRepository(db)
+	profileService := services.NewProfileService(profileRepository)
+	profileHandler := handlers.NewProfileHandler(profileService)
+
+	projectRepository := repositories.NewProjectRepository(db)
+	projectService := services.NewProjectService(projectRepository)
+	projectHandler := handlers.NewProjectHandler(projectService)
+
 	loginRateLimiter := middleware.NewInMemoryRateLimiter(5, 10*time.Minute)
 
 	api := router.Group("/api")
@@ -43,20 +51,10 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *gin.Engine {
 			auth.GET("/me", middleware.AuthMiddleware(cfg), authHandler.Me)
 		}
 
-		// Public routes will be implemented in Phase 5.
-		api.GET("/profile/placeholder", func(ctx *gin.Context) {
-			utils.SuccessResponse(ctx, http.StatusOK, "Profile route placeholder", gin.H{
-				"next": "Phase 5 Public Profile API",
-			})
-		})
+		api.GET("/profile", profileHandler.GetPublicProfile)
+		api.GET("/projects", projectHandler.GetPublishedProjects)
+		api.GET("/projects/:slug", projectHandler.GetPublishedProjectBySlug)
 
-		api.GET("/projects/placeholder", func(ctx *gin.Context) {
-			utils.SuccessResponse(ctx, http.StatusOK, "Projects route placeholder", gin.H{
-				"next": "Phase 5 Public Project API",
-			})
-		})
-
-		// Admin routes will be extended in Phase 6.
 		admin := api.Group("/admin")
 		admin.Use(middleware.AuthMiddleware(cfg))
 		{
@@ -67,6 +65,12 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *gin.Engine {
 					"role":   ctx.GetString("user_role"),
 				})
 			})
+
+			admin.GET("/projects", projectHandler.GetAdminProjects)
+			admin.GET("/projects/:id", projectHandler.GetAdminProjectByID)
+			admin.POST("/projects", projectHandler.CreateAdminProject)
+			admin.PUT("/projects/:id", projectHandler.UpdateAdminProject)
+			admin.DELETE("/projects/:id", projectHandler.DeleteAdminProject)
 		}
 	}
 
