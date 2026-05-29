@@ -15,7 +15,7 @@ type File struct {
 	MimeType        string    `gorm:"type:varchar(100);not null;column:mime_type"`
 	FileSize        int64     `gorm:"type:bigint;not null;column:file_size"`
 	FileType        string    `gorm:"type:varchar(100);not null;column:file_type"`
-	StorageProvider string    `gorm:"type:varchar(100);not null;default:cloudflare_r2;column:storage_provider"`
+	StorageProvider string    `gorm:"type:varchar(100);not null;default:supabase_storage;column:storage_provider"`
 	CreatedAt       time.Time `gorm:"type:timestamp;not null;default:now();column:created_at"`
 	UpdatedAt       time.Time `gorm:"type:timestamp;not null;default:now();column:updated_at"`
 }

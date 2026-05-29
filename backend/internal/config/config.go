@@ -18,11 +18,18 @@ type Config struct {
 	JWTSecret    string
 	JWTExpiresIn time.Duration
 
-	R2AccountID       string
-	R2AccessKeyID     string
-	R2SecretAccessKey string
-	R2BucketName      string
-	R2PublicURL       string
+	// R2AccountID       string
+	// R2AccessKeyID     string
+	// R2SecretAccessKey string
+	// R2BucketName      string
+	// R2PublicURL       string
+
+	SupabaseStorageEndpoint        string
+	SupabaseStorageRegion          string
+	SupabaseStorageAccessKeyID     string
+	SupabaseStorageSecretAccessKey string
+	SupabaseStorageBucket          string
+	SupabaseStoragePublicURL       string
 
 	FrontendOrigin string
 }
@@ -41,11 +48,18 @@ func Load() *Config {
 		JWTSecret:    getEnv("JWT_SECRET", "change_me"),
 		JWTExpiresIn: jwtExpiresIn,
 
-		R2AccountID:       getEnv("R2_ACCOUNT_ID", ""),
-		R2AccessKeyID:     getEnv("R2_ACCESS_KEY_ID", ""),
-		R2SecretAccessKey: getEnv("R2_SECRET_ACCESS_KEY", ""),
-		R2BucketName:      getEnv("R2_BUCKET_NAME", ""),
-		R2PublicURL:       getEnv("R2_PUBLIC_URL", ""),
+		// R2AccountID:       getEnv("R2_ACCOUNT_ID", ""),
+		// R2AccessKeyID:     getEnv("R2_ACCESS_KEY_ID", ""),
+		// R2SecretAccessKey: getEnv("R2_SECRET_ACCESS_KEY", ""),
+		// R2BucketName:      getEnv("R2_BUCKET_NAME", ""),
+		// R2PublicURL:       getEnv("R2_PUBLIC_URL", ""),
+
+		SupabaseStorageEndpoint:        getEnv("SUPABASE_STORAGE_ENDPOINT", ""),
+		SupabaseStorageRegion:          getEnv("SUPABASE_STORAGE_REGION", "ap-southeast-1"),
+		SupabaseStorageAccessKeyID:     getEnv("SUPABASE_STORAGE_ACCESS_KEY_ID", ""),
+		SupabaseStorageSecretAccessKey: getEnv("SUPABASE_STORAGE_SECRET_ACCESS_KEY", ""),
+		SupabaseStorageBucket:          getEnv("SUPABASE_STORAGE_BUCKET", ""),
+		SupabaseStoragePublicURL:       getEnv("SUPABASE_STORAGE_PUBLIC_URL", ""),
 
 		FrontendOrigin: getEnv("FRONTEND_ORIGIN", "http://localhost:3000"),
 	}

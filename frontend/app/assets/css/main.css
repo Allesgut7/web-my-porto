@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-app-background text-app-text font-sans antialiased;
+  }
+
+  ::selection {
+    @apply bg-brand-soft text-brand-primary;
+  }
+}
+
+@layer components {
+  .app-container {
+    @apply mx-auto w-full max-w-6xl px-6 lg:px-8;
+  }
+
+  .app-container-wide {
+    @apply mx-auto w-full max-w-7xl px-6 lg:px-8;
+  }
+
+  .app-section {
+    @apply py-16 md:py-24 lg:py-28;
+  }
+
+  .section-eyebrow {
+    @apply font-mono text-xs font-semibold uppercase tracking-[0.2em] text-brand-primary;
+  }
+
+  .section-title {
+    @apply mt-3 text-3xl font-bold tracking-tight text-app-text md:text-4xl;
+  }
+
+  .section-description {
+    @apply mt-4 max-w-2xl text-base leading-7 text-app-muted md:text-lg;
+  }
+
+  .app-card {
+    @apply rounded-card border border-app-border bg-app-surface shadow-soft;
+  }
+
+  .app-card-hover {
+    @apply transition duration-300 hover:-translate-y-1 hover:shadow-card;
+  }
+
+  .btn {
+    @apply inline-flex min-h-11 items-center justify-center rounded-xl px-5 py-2.5 text-sm font-semibold transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2;
+  }
+
+  .btn-primary {
+    @apply btn bg-brand-primary text-white hover:bg-blue-800;
+  }
+
+  .btn-secondary {
+    @apply btn border border-app-border bg-white text-app-text hover:bg-slate-50;
+  }
+
+  .btn-ghost {
+    @apply btn text-app-muted hover:bg-brand-soft hover:text-brand-primary;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium;
+  }
+
+  .badge-primary {
+    @apply badge border-blue-100 bg-brand-soft text-brand-primary;
+  }
+
+  .badge-tech {
+    @apply badge border-cyan-100 bg-cyan-50 text-cyan-700;
+  }
+
+  .badge-accent {
+    @apply badge border-amber-100 bg-amber-50 text-amber-700;
+  }
+
+  .technical-grid {
+    background-image:
+      linear-gradient(rgba(226, 232, 240, 0.65) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(226, 232, 240, 0.65) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .dark-technical-grid {
+    background-image:
+      linear-gradient(rgba(148, 163, 184, 0.12) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148, 163, 184, 0.12) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+}

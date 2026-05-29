@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"context"
+	"log"
 	"net/http"
 	"time"
 
@@ -12,6 +14,7 @@ import (
 	"github.com/allesgut7/web-my-porto/backend/internal/middleware"
 	"github.com/allesgut7/web-my-porto/backend/internal/repositories"
 	"github.com/allesgut7/web-my-porto/backend/internal/services"
+	"github.com/allesgut7/web-my-porto/backend/internal/storage"
 	"github.com/allesgut7/web-my-porto/backend/internal/utils"
 )
 
@@ -37,6 +40,18 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *gin.Engine {
 	projectRepository := repositories.NewProjectRepository(db)
 	projectService := services.NewProjectService(projectRepository)
 	projectHandler := handlers.NewProjectHandler(projectService)
+
+	fileRepository := repositories.NewFileRepository(db)
+
+	var uploadHandler *handlers.UploadHandler
+
+	storageClient, err := storage.NewSupabaseStorageClient(context.Background(), cfg)
+	if err != nil {
+		log.Printf("[WARN] Supabase Storage client is not configured: %v", err)
+	} else {
+		uploadService := services.NewUploadService(fileRepository, storageClient)
+		uploadHandler = handlers.NewUploadHandler(uploadService)
+	}
 
 	loginRateLimiter := middleware.NewInMemoryRateLimiter(5, 10*time.Minute)
 
@@ -71,6 +86,16 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *gin.Engine {
 			admin.POST("/projects", projectHandler.CreateAdminProject)
 			admin.PUT("/projects/:id", projectHandler.UpdateAdminProject)
 			admin.DELETE("/projects/:id", projectHandler.DeleteAdminProject)
+
+			if uploadHandler != nil {
+				admin.POST("/uploads/images", uploadHandler.UploadImage)
+				admin.POST("/uploads/files", uploadHandler.UploadFile)
+				admin.DELETE("/uploads/:id", uploadHandler.DeleteFile)
+			} else {
+				admin.POST("/uploads/images", storageNotConfiguredHandler)
+				admin.POST("/uploads/files", storageNotConfiguredHandler)
+				admin.DELETE("/uploads/:id", storageNotConfiguredHandler)
+			}
 		}
 	}
 
@@ -96,4 +121,8 @@ func HealthCheckHandler(cfg *config.Config, db *gorm.DB) gin.HandlerFunc {
 			"database": "connected",
 		})
 	}
+}
+
+func storageNotConfiguredHandler(ctx *gin.Context) {
+	utils.ErrorResponse(ctx, http.StatusServiceUnavailable, "Storage is not configured", nil)
 }
