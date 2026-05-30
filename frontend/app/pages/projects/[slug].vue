@@ -1,360 +1,314 @@
 <script setup lang="ts">
-// definePageMeta({
-//   layout: 'public',
-// })
-
 const route = useRoute()
-const slug = computed(() => String(route.params.slug || ''))
+const slug = String(route.params.slug || '')
 
-const { data: project, pending, error, refresh } = useProjectDetail(slug.value, {
-  watch: [slug],
+const {
+  data: project,
+  pending,
+  error,
+  refresh,
+} = await useProjectDetail(slug)
+
+const title = computed(() => project.value?.title || 'Project Detail')
+const description = computed(() => {
+  return (
+    project.value?.shortDescription ||
+    project.value?.description ||
+    'Project case study and technical implementation detail.'
+  )
 })
+
+const techStacks = computed(() => project.value?.techStacks || [])
+const thumbnailUrl = computed(() => resolveImageUrl(project.value))
 
 useSeoMeta({
-  title: () => project.value?.title || 'Project Detail',
-  description: () =>
-    project.value?.shortDescription ||
-    project.value?.description ||
-    'Detail project portfolio developer.',
-  ogTitle: () => project.value?.title || 'Project Detail',
-  ogDescription: () =>
-    project.value?.shortDescription ||
-    project.value?.description ||
-    'Detail project portfolio developer.',
+  title: () => `${title.value} — Project Case Study`,
+  description: () => description.value,
+  ogTitle: () => `${title.value} — Project Case Study`,
+  ogDescription: () => description.value,
   ogImage: () => project.value?.thumbnailUrl || undefined,
-  ogType: 'article',
-  twitterCard: 'summary_large_image',
 })
-
-function retry() {
-  refresh()
-}
-
-function formatDate(date?: string | null) {
-  if (!date) return null
-
-  const parsed = new Date(date)
-  if (Number.isNaN(parsed.getTime())) return null
-
-  return new Intl.DateTimeFormat('id-ID', {
-    year: 'numeric',
-    month: 'long',
-  }).format(parsed)
-}
 </script>
 
 <template>
   <div>
-    <section class="technical-grid border-b border-app-border bg-app-background py-16 md:py-20">
-      <div class="app-container-wide">
-        <NuxtLink
-          to="/projects"
-          class="text-sm font-semibold text-brand-primary hover:text-blue-800"
-        >
-          ← Back to projects
-        </NuxtLink>
+    <LoadingState
+      v-if="pending"
+      title="Loading case study"
+      message="Fetching project detail from the public API."
+    />
 
-        <LoadingState
-          v-if="pending"
-          class="mt-8"
-        />
+    <ErrorState
+      v-else-if="error"
+      title="Project not found"
+      :message="error.message"
+      @retry="refresh"
+    />
 
-        <ErrorState
-          v-else-if="error"
-          class="mt-8"
-          title="Project tidak dapat dimuat"
-          :message="error.message"
-          @retry="retry"
-        />
+    <template v-else-if="project">
+      <section class="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-cyan-50 py-20 md:py-28">
+        <div class="absolute inset-0 technical-grid opacity-70" />
+        <div class="absolute -right-24 top-16 h-72 w-72 rounded-full bg-cyan-200/40 blur-3xl" />
 
-        <div
-          v-else-if="project"
-          class="mt-8"
-        >
-          <div class="flex flex-wrap gap-2">
-            <span
-              v-if="project.projectType"
-              class="badge-tech"
-            >
-              {{ project.projectType }}
-            </span>
+        <div class="app-container relative">
+          <NuxtLink
+            to="/projects"
+            class="inline-flex items-center text-sm font-semibold text-brand-primary hover:text-blue-800"
+          >
+            ← Back to projects
+          </NuxtLink>
 
-            <span
-              v-if="project.isFeatured"
-              class="badge-accent"
-            >
-              Featured
-            </span>
+          <div class="mt-8 grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+            <AnimatedContainer>
+              <p class="section-eyebrow">
+                Project Case Study
+              </p>
 
-            <span class="badge-primary">
-              Published
-            </span>
-          </div>
+              <h1 class="mt-4 text-4xl font-bold tracking-tight text-app-text md:text-6xl">
+                {{ project.title }}
+              </h1>
 
-          <h1 class="mt-5 max-w-4xl text-4xl font-extrabold tracking-tight text-app-text md:text-5xl">
-            {{ project.title }}
-          </h1>
+              <p class="mt-6 max-w-3xl text-lg leading-8 text-app-muted">
+                {{ description }}
+              </p>
 
-          <p class="mt-5 max-w-3xl text-base leading-8 text-app-muted md:text-lg">
-            {{ project.shortDescription || project.description || 'Detail project belum memiliki deskripsi.' }}
-          </p>
+              <div class="mt-6 flex flex-wrap gap-3">
+                <TechBadge
+                  v-if="project.projectType"
+                  :label="project.projectType"
+                  tone="tech"
+                />
 
-          <div class="mt-8 flex flex-wrap gap-3">
-            <a
-              v-if="project.demoUrl"
-              :href="project.demoUrl"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn-primary"
-            >
-              Open Demo
-            </a>
+                <TechBadge
+                  v-if="project.isFeatured"
+                  label="Featured"
+                  tone="accent"
+                />
 
-            <a
-              v-if="project.repositoryUrl"
-              :href="project.repositoryUrl"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn-secondary"
-            >
-              Repository
-            </a>
+                <TechBadge
+                  label="Published"
+                  tone="primary"
+                />
+              </div>
+            </AnimatedContainer>
 
-            <a
-              v-if="project.documentationUrl"
-              :href="project.documentationUrl"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn-ghost"
-            >
-              Documentation
-            </a>
+            <AnimatedContainer :delay="140">
+              <div class="overflow-hidden rounded-3xl border border-app-border bg-white shadow-card">
+                <div class="aspect-[16/9] overflow-hidden">
+                  <img
+                    v-if="thumbnailUrl"
+                    :src="thumbnailUrl"
+                    :alt="`${project.title} hero image`"
+                    class="h-full w-full object-cover"
+                  >
+
+                  <FallbackThumbnail
+                    v-else
+                    :title="project.title"
+                    :label="project.projectType || 'Case Study'"
+                  />
+                </div>
+              </div>
+            </AnimatedContainer>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section
-      v-if="project"
-      class="app-section"
-    >
-      <div class="app-container-wide grid gap-8 lg:grid-cols-[1fr_360px]">
-        <article class="space-y-8">
-          <div class="technical-grid aspect-[16/9] overflow-hidden rounded-panel border border-app-border bg-brand-soft shadow-soft">
-            <img
-              v-if="project.thumbnailUrl"
-              :src="project.thumbnailUrl"
-              :alt="`Hero image project ${project.title}`"
-              class="h-full w-full object-cover"
-              loading="eager"
-            >
+      <section class="app-section bg-app-background">
+        <div class="app-container">
+          <div class="grid gap-8 lg:grid-cols-[1fr_360px]">
+            <main class="space-y-8">
+              <AnimatedContainer>
+                <article class="app-card p-6 md:p-8">
+                  <p class="section-eyebrow">
+                    Overview
+                  </p>
+                  <h2 class="mt-3 text-2xl font-bold text-app-text">
+                    What this project is about
+                  </h2>
+                  <p class="mt-4 whitespace-pre-line text-base leading-8 text-app-muted">
+                    {{ project.description || project.shortDescription || 'No detailed description available yet.' }}
+                  </p>
+                </article>
+              </AnimatedContainer>
 
-            <div
-              v-else
-              class="flex h-full w-full items-center justify-center p-8 text-center"
-            >
-              <div>
-                <p class="section-eyebrow">
-                  Project Preview
-                </p>
-                <p class="mt-3 text-2xl font-bold text-app-text">
-                  {{ project.title }}
-                </p>
-              </div>
-            </div>
+              <AnimatedContainer :delay="100">
+                <div class="grid gap-6 md:grid-cols-2">
+                  <article class="app-card p-6 md:p-8">
+                    <p class="section-eyebrow">
+                      Problem
+                    </p>
+                    <h3 class="mt-3 text-xl font-bold text-app-text">
+                      Requirement-driven implementation
+                    </h3>
+                    <p class="mt-4 text-sm leading-7 text-app-muted">
+                      This project is presented as a technical portfolio case study. The implementation focuses on solving a real user flow with clear structure, maintainable code, and reliable data handling.
+                    </p>
+                  </article>
+
+                  <article class="app-card p-6 md:p-8">
+                    <p class="section-eyebrow">
+                      Solution
+                    </p>
+                    <h3 class="mt-3 text-xl font-bold text-app-text">
+                      Structured system delivery
+                    </h3>
+                    <p class="mt-4 text-sm leading-7 text-app-muted">
+                      The solution is built around reusable components, API-driven content, responsive layout, and integration-tested behavior from admin input to public display.
+                    </p>
+                  </article>
+                </div>
+              </AnimatedContainer>
+
+              <AnimatedContainer :delay="160">
+                <article class="app-card p-6 md:p-8">
+                  <p class="section-eyebrow">
+                    Technical Notes
+                  </p>
+                  <h2 class="mt-3 text-2xl font-bold text-app-text">
+                    Built with a content-first architecture
+                  </h2>
+
+                  <div class="mt-6 grid gap-4 md:grid-cols-3">
+                    <div class="rounded-2xl bg-slate-50 p-5 ring-1 ring-app-border">
+                      <p class="text-sm font-bold text-app-text">
+                        API-driven
+                      </p>
+                      <p class="mt-2 text-sm leading-6 text-app-muted">
+                        Public content is rendered from API response.
+                      </p>
+                    </div>
+
+                    <div class="rounded-2xl bg-slate-50 p-5 ring-1 ring-app-border">
+                      <p class="text-sm font-bold text-app-text">
+                        Responsive
+                      </p>
+                      <p class="mt-2 text-sm leading-6 text-app-muted">
+                        Layout adapts across mobile, tablet, and desktop.
+                      </p>
+                    </div>
+
+                    <div class="rounded-2xl bg-slate-50 p-5 ring-1 ring-app-border">
+                      <p class="text-sm font-bold text-app-text">
+                        Validated
+                      </p>
+                      <p class="mt-2 text-sm leading-6 text-app-muted">
+                        Flow is checked through integration testing.
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              </AnimatedContainer>
+            </main>
+
+            <aside class="space-y-6 lg:sticky lg:top-24 lg:self-start">
+              <AnimatedContainer :delay="120">
+                <div class="app-card p-6">
+                  <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-app-muted">
+                    Metadata
+                  </p>
+
+                  <dl class="mt-5 space-y-4">
+                    <div>
+                      <dt class="text-xs font-semibold uppercase tracking-[0.16em] text-app-muted">
+                        Type
+                      </dt>
+                      <dd class="mt-1 text-sm font-semibold text-app-text">
+                        {{ project.projectType || 'Project' }}
+                      </dd>
+                    </div>
+
+                    <div v-if="project.startedAt">
+                      <dt class="text-xs font-semibold uppercase tracking-[0.16em] text-app-muted">
+                        Started
+                      </dt>
+                      <dd class="mt-1 text-sm font-semibold text-app-text">
+                        {{ project.startedAt }}
+                      </dd>
+                    </div>
+
+                    <div v-if="project.completedAt">
+                      <dt class="text-xs font-semibold uppercase tracking-[0.16em] text-app-muted">
+                        Completed
+                      </dt>
+                      <dd class="mt-1 text-sm font-semibold text-app-text">
+                        {{ project.completedAt }}
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+              </AnimatedContainer>
+
+              <AnimatedContainer
+                v-if="techStacks.length"
+                :delay="180"
+              >
+                <div class="app-card p-6">
+                  <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-app-muted">
+                    Tech Stack
+                  </p>
+
+                  <div class="mt-5 flex flex-wrap gap-2">
+                    <TechBadge
+                      v-for="stack in techStacks"
+                      :key="stack.id || stack.name"
+                      :label="stack.name"
+                      tone="neutral"
+                    />
+                  </div>
+                </div>
+              </AnimatedContainer>
+
+              <AnimatedContainer :delay="220">
+                <div class="app-card p-6">
+                  <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-app-muted">
+                    Links
+                  </p>
+
+                  <div class="mt-5 grid gap-3">
+                    <a
+                      v-if="project.demoUrl"
+                      :href="project.demoUrl"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="btn-primary w-full"
+                    >
+                      Open Demo
+                    </a>
+
+                    <a
+                      v-if="project.repositoryUrl"
+                      :href="project.repositoryUrl"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="btn-secondary w-full"
+                    >
+                      Repository
+                    </a>
+
+                    <a
+                      v-if="project.documentationUrl"
+                      :href="project.documentationUrl"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="btn-secondary w-full"
+                    >
+                      Documentation
+                    </a>
+
+                    <NuxtLink
+                      to="/projects"
+                      class="btn-ghost w-full"
+                    >
+                      Back to projects
+                    </NuxtLink>
+                  </div>
+                </div>
+              </AnimatedContainer>
+            </aside>
           </div>
-
-          <div class="app-card p-6 md:p-8">
-            <p class="section-eyebrow">
-              Overview
-            </p>
-
-            <div class="prose prose-slate mt-5 max-w-none">
-              <p class="text-base leading-8 text-app-muted">
-                {{ project.description || project.shortDescription || 'Deskripsi lengkap project belum tersedia.' }}
-              </p>
-            </div>
-          </div>
-
-          <div
-            v-if="project.problem || project.solution || project.impact"
-            class="grid gap-6 md:grid-cols-3"
-          >
-            <div
-              v-if="project.problem"
-              class="app-card p-6"
-            >
-              <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-brand-primary">
-                Problem
-              </p>
-              <p class="mt-4 text-sm leading-6 text-app-muted">
-                {{ project.problem }}
-              </p>
-            </div>
-
-            <div
-              v-if="project.solution"
-              class="app-card p-6"
-            >
-              <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-cyan-700">
-                Solution
-              </p>
-              <p class="mt-4 text-sm leading-6 text-app-muted">
-                {{ project.solution }}
-              </p>
-            </div>
-
-            <div
-              v-if="project.impact"
-              class="app-card p-6"
-            >
-              <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">
-                Impact
-              </p>
-              <p class="mt-4 text-sm leading-6 text-app-muted">
-                {{ project.impact }}
-              </p>
-            </div>
-          </div>
-
-          <div
-            v-if="project.images.length"
-            class="app-card p-6 md:p-8"
-          >
-            <p class="section-eyebrow">
-              Gallery
-            </p>
-
-            <div class="mt-6 grid gap-4 md:grid-cols-2">
-              <figure
-                v-for="image in project.images"
-                :key="image.id"
-                class="overflow-hidden rounded-2xl border border-app-border bg-app-background"
-              >
-                <img
-                  :src="image.imageUrl"
-                  :alt="image.caption || `Screenshot project ${project.title}`"
-                  class="aspect-video w-full object-cover"
-                  loading="lazy"
-                >
-
-                <figcaption
-                  v-if="image.caption"
-                  class="p-4 text-sm text-app-muted"
-                >
-                  {{ image.caption }}
-                </figcaption>
-              </figure>
-            </div>
-          </div>
-        </article>
-
-        <aside class="space-y-6">
-          <div class="app-card p-6">
-            <p class="section-eyebrow">
-              Metadata
-            </p>
-
-            <dl class="mt-5 space-y-4 text-sm">
-              <div
-                v-if="project.projectType"
-                class="flex justify-between gap-4"
-              >
-                <dt class="text-app-muted">Category</dt>
-                <dd class="font-semibold text-app-text">{{ project.projectType }}</dd>
-              </div>
-
-              <div
-                v-if="project.role"
-                class="flex justify-between gap-4"
-              >
-                <dt class="text-app-muted">Role</dt>
-                <dd class="font-semibold text-app-text">{{ project.role }}</dd>
-              </div>
-
-              <div
-                v-if="formatDate(project.startedAt)"
-                class="flex justify-between gap-4"
-              >
-                <dt class="text-app-muted">Started</dt>
-                <dd class="font-semibold text-app-text">{{ formatDate(project.startedAt) }}</dd>
-              </div>
-
-              <div
-                v-if="formatDate(project.completedAt)"
-                class="flex justify-between gap-4"
-              >
-                <dt class="text-app-muted">Completed</dt>
-                <dd class="font-semibold text-app-text">{{ formatDate(project.completedAt) }}</dd>
-              </div>
-            </dl>
-          </div>
-
-          <div
-            v-if="project.techStacks.length"
-            class="app-card p-6"
-          >
-            <p class="section-eyebrow">
-              Tech Stack
-            </p>
-
-            <div class="mt-5 flex flex-wrap gap-2">
-              <span
-                v-for="stack in project.techStacks"
-                :key="stack.id || stack.name"
-                class="badge-tech"
-              >
-                {{ stack.name }}
-              </span>
-            </div>
-          </div>
-
-          <div class="app-card p-6">
-            <p class="section-eyebrow">
-              Links
-            </p>
-
-            <div class="mt-5 space-y-3">
-              <a
-                v-if="project.demoUrl"
-                :href="project.demoUrl"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="btn-primary w-full"
-              >
-                Open Demo
-              </a>
-
-              <a
-                v-if="project.repositoryUrl"
-                :href="project.repositoryUrl"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="btn-secondary w-full"
-              >
-                Repository
-              </a>
-
-              <a
-                v-if="project.documentationUrl"
-                :href="project.documentationUrl"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="btn-ghost w-full"
-              >
-                Documentation
-              </a>
-
-              <p
-                v-if="!project.demoUrl && !project.repositoryUrl && !project.documentationUrl"
-                class="text-sm leading-6 text-app-muted"
-              >
-                Link external belum tersedia.
-              </p>
-            </div>
-          </div>
-        </aside>
-      </div>
-    </section>
+        </div>
+      </section>
+    </template>
   </div>
 </template>

@@ -1,76 +1,88 @@
 <script setup lang="ts">
-// definePageMeta({
-//   layout: 'public',
-// })
+const {
+  data: profile,
+  pending: profilePending,
+  error: profileError,
+  refresh: refreshProfile,
+} = await useProfile()
 
-const { data: profile, pending: profilePending, error: profileError, refresh: refreshProfile } = useProfile()
-const { data: projects, pending: projectsPending, error: projectsError, refresh: refreshProjects } = useFeaturedProjects(3)
+const {
+  data: projects,
+  pending: projectsPending,
+  error: projectsError,
+  refresh: refreshProjects,
+} = await useFeaturedProjects(6)
 
-const siteUrl = useRuntimeConfig().public.siteUrl
+const isLoading = computed(() => profilePending.value || projectsPending.value)
+const hasError = computed(() => profileError.value || projectsError.value)
+
+async function retry() {
+  await Promise.all([refreshProfile(), refreshProjects()])
+}
 
 useSeoMeta({
-  title: () => profile.value?.fullName ? `${profile.value.fullName} — Developer Portfolio` : 'Developer Portfolio',
-  description: () =>
-    profile.value?.bio ||
-    'Portfolio developer berbasis database-driven content yang menampilkan profil, project, dan kontak profesional.',
-  ogTitle: () => profile.value?.fullName ? `${profile.value.fullName} — Developer Portfolio` : 'Developer Portfolio',
-  ogDescription: () =>
-    profile.value?.bio ||
-    'Portfolio developer berbasis database-driven content yang menampilkan profil, project, dan kontak profesional.',
-  ogUrl: siteUrl,
-  ogType: 'website',
-  twitterCard: 'summary_large_image',
+  title: 'Web My Porto — Technical Developer Portfolio',
+  description: 'A modern technical portfolio showcasing developer profile, selected projects, and database-driven portfolio works.',
 })
-
-function retryProfile() {
-  refreshProfile()
-}
-
-function retryProjects() {
-  refreshProjects()
-}
 </script>
 
 <template>
   <div>
     <LoadingState
-      v-if="profilePending"
-      class="app-container my-16"
+      v-if="isLoading"
+      title="Loading portfolio"
+      message="Fetching profile and selected project data from the API."
     />
 
     <ErrorState
-      v-else-if="profileError"
-      class="app-container my-16"
-      title="Profile gagal dimuat"
-      :message="profileError.message"
-      @retry="retryProfile"
+      v-else-if="hasError"
+      title="Portfolio failed to load"
+      message="The public API is currently unavailable. Please try again."
+      @retry="retry"
     />
 
-    <template v-else-if="profile">
+    <template v-else>
       <HeroSection :profile="profile" />
       <AboutSection :profile="profile" />
 
-      <section v-if="projectsPending" class="app-section">
-        <div class="app-container grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <LoadingState />
-          <LoadingState />
-          <LoadingState />
+      <section class="bg-app-background py-12">
+        <div class="app-container">
+          <div class="grid gap-4 md:grid-cols-5">
+            <CapabilityCard
+              title="Backend"
+              description="REST API, auth, validation, layered architecture."
+              label="Go"
+              tone="primary"
+            />
+            <CapabilityCard
+              title="Frontend"
+              description="Nuxt, TypeScript, Tailwind, responsive UI."
+              label="Vue"
+              tone="tech"
+            />
+            <CapabilityCard
+              title="Data"
+              description="Database-driven content and structured data flow."
+              label="SQL"
+              tone="accent"
+            />
+            <CapabilityCard
+              title="Testing"
+              description="Manual integration testing and regression flow."
+              label="QA"
+              tone="primary"
+            />
+            <CapabilityCard
+              title="Deployment"
+              description="Docker-ready architecture for production setup."
+              label="DevOps"
+              tone="tech"
+            />
+          </div>
         </div>
       </section>
 
-      <ErrorState
-        v-else-if="projectsError"
-        class="app-container my-16"
-        title="Project gagal dimuat"
-        :message="projectsError.message"
-        @retry="retryProjects"
-      />
-
-      <ProjectSection
-        v-else
-        :projects="projects || []"
-      />
-
+      <ProjectSection :projects="projects || []" />
       <ContactSection :profile="profile" />
     </template>
   </div>

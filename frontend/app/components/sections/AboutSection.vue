@@ -1,94 +1,102 @@
 <script setup lang="ts">
-import type { Profile } from '~/types/profile'
+type ProfileLike = {
+  name?: string | null
+  fullName?: string | null
+  role?: string | null
+  headline?: string | null
+  bio?: string | null
+  summary?: string | null
+  location?: string | null
+  avatarUrl?: string | null
+}
 
-defineProps<{
-  profile: Profile
+const props = defineProps<{
+  profile?: ProfileLike | null
 }>()
+
+const displayName = computed(() => props.profile?.name || props.profile?.fullName || 'Developer')
+const role = computed(() => props.profile?.role || props.profile?.headline || 'Developer')
+const bio = computed(() => {
+  return (
+    props.profile?.bio ||
+    props.profile?.summary ||
+    'I focus on building practical software systems with clean architecture, reliable APIs, and thoughtful user interfaces.'
+  )
+})
+
+const capabilities = [
+  {
+    title: 'Backend Engineering',
+    description: 'Designing REST APIs, database models, layered architecture, and authentication flows.',
+    label: 'API',
+    tone: 'primary' as const,
+  },
+  {
+    title: 'Frontend Development',
+    description: 'Building responsive Nuxt interfaces with reusable components and clear user flows.',
+    label: 'UI',
+    tone: 'tech' as const,
+  },
+  {
+    title: 'Data & Testing Mindset',
+    description: 'Thinking in states, edge cases, validation, integration testing, and measurable outcomes.',
+    label: 'QA',
+    tone: 'accent' as const,
+  },
+]
 </script>
 
 <template>
-  <section
-    id="about"
-    class="app-section bg-white"
-  >
-    <div class="app-container grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-      <div>
-        <p class="section-eyebrow">
-          01 / Profile
-        </p>
+  <section class="app-section bg-app-background">
+    <div class="app-container">
+      <div class="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <AnimatedContainer>
+          <SectionHeader
+            eyebrow="About"
+            title="A technical builder who turns ideas into structured systems."
+            :description="bio"
+          />
 
-        <h2 class="section-title">
-          About the developer
-        </h2>
+          <div class="mt-8 grid gap-4 sm:grid-cols-2">
+            <div class="app-card p-6">
+              <p class="font-mono text-xs uppercase tracking-[0.2em] text-app-muted">
+                Identity
+              </p>
+              <p class="mt-3 text-xl font-bold text-app-text">
+                {{ displayName }}
+              </p>
+              <p class="mt-2 text-sm text-app-muted">
+                {{ role }}
+              </p>
+            </div>
 
-        <p class="section-description">
-          Ringkasan profil profesional yang diambil dari database melalui Public API.
-        </p>
-      </div>
-
-      <div class="app-card p-6 md:p-8">
-        <p class="text-lg leading-8 text-app-muted">
-          {{ profile.bio || 'Profil developer belum tersedia. Silakan tambahkan data profile melalui seed atau dashboard admin pada fase berikutnya.' }}
-        </p>
-
-        <div class="mt-8 grid gap-4 sm:grid-cols-2">
-          <div class="rounded-2xl border border-app-border bg-app-background p-5">
-            <p class="font-mono text-xs uppercase tracking-[0.18em] text-brand-primary">
-              Name
-            </p>
-            <p class="mt-2 font-semibold text-app-text">
-              {{ profile.fullName }}
-            </p>
+            <div class="app-card p-6">
+              <p class="font-mono text-xs uppercase tracking-[0.2em] text-app-muted">
+                Location
+              </p>
+              <p class="mt-3 text-xl font-bold text-app-text">
+                {{ profile?.location || 'Indonesia' }}
+              </p>
+              <p class="mt-2 text-sm text-app-muted">
+                Open to remote collaboration.
+              </p>
+            </div>
           </div>
+        </AnimatedContainer>
 
-          <div class="rounded-2xl border border-app-border bg-app-background p-5">
-            <p class="font-mono text-xs uppercase tracking-[0.18em] text-brand-primary">
-              Location
-            </p>
-            <p class="mt-2 font-semibold text-app-text">
-              {{ profile.location || 'Not specified' }}
-            </p>
-          </div>
-
-          <div class="rounded-2xl border border-app-border bg-app-background p-5">
-            <p class="font-mono text-xs uppercase tracking-[0.18em] text-brand-primary">
-              Email
-            </p>
-            <a
-              v-if="profile.email"
-              :href="`mailto:${profile.email}`"
-              class="mt-2 block font-semibold text-app-text hover:text-brand-primary"
-            >
-              {{ profile.email }}
-            </a>
-            <p
-              v-else
-              class="mt-2 font-semibold text-app-text"
-            >
-              Not specified
-            </p>
-          </div>
-
-          <div class="rounded-2xl border border-app-border bg-app-background p-5">
-            <p class="font-mono text-xs uppercase tracking-[0.18em] text-brand-primary">
-              Website
-            </p>
-            <a
-              v-if="profile.websiteUrl"
-              :href="profile.websiteUrl"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="mt-2 block font-semibold text-app-text hover:text-brand-primary"
-            >
-              Visit website
-            </a>
-            <p
-              v-else
-              class="mt-2 font-semibold text-app-text"
-            >
-              Portfolio website
-            </p>
-          </div>
+        <div class="grid gap-4">
+          <AnimatedContainer
+            v-for="(capability, index) in capabilities"
+            :key="capability.title"
+            :delay="index * 120"
+          >
+            <CapabilityCard
+              :title="capability.title"
+              :description="capability.description"
+              :label="capability.label"
+              :tone="capability.tone"
+            />
+          </AnimatedContainer>
         </div>
       </div>
     </div>

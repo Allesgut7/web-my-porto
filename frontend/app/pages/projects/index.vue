@@ -1,139 +1,122 @@
 <script setup lang="ts">
-// definePageMeta({
-//   layout: 'public',
-// })
-
 const route = useRoute()
 const router = useRouter()
 
-const search = ref(typeof route.query.search === 'string' ? route.query.search : '')
-const category = ref(typeof route.query.category === 'string' ? route.query.category : '')
+const search = ref((route.query.search as string) || '')
 
-const query = computed(() => ({
+const {
+  data: projects,
+  pending,
+  error,
+  refresh,
+} = await useProjects({
   page: 1,
   limit: 12,
-  sort: 'display_order' as const,
   search: search.value || undefined,
-  category: category.value || undefined,
-}))
-
-const { data: projects, pending, error, refresh } = useProjects(query.value, {
-  watch: [query],
+  sort: 'display_order',
 })
 
-const categories = computed(() => {
-  const items = projects.value || []
-  return Array.from(
-    new Set(
-      items
-        .map((project) => project.projectType)
-        .filter(Boolean) as string[],
-    ),
-  )
-})
-
-watch([search, category], () => {
-  router.replace({
+watch(search, async (value) => {
+  await router.replace({
     query: {
-      ...(search.value ? { search: search.value } : {}),
-      ...(category.value ? { category: category.value } : {}),
+      ...route.query,
+      search: value || undefined,
     },
+  })
+
+  await refresh()
+})
+
+const filteredProjects = computed(() => {
+  const list = projects.value || []
+
+  if (!search.value) {
+    return list
+  }
+
+  const keyword = search.value.toLowerCase()
+
+  return list.filter((project) => {
+    const title = project.title?.toLowerCase() || ''
+    const description = project.shortDescription?.toLowerCase() || ''
+      ''
+    const projectType = project.projectType?.toLowerCase() || ''
+    const techStacks = project.techStacks
+      ?.map((stack) => stack.name?.toLowerCase() || '')
+      .join(' ') || ''
+
+    return (
+      title.includes(keyword) ||
+      description.includes(keyword) ||
+      projectType.includes(keyword) ||
+      techStacks.includes(keyword)
+    )
   })
 })
 
 useSeoMeta({
-  title: 'Projects',
-  description: 'Daftar project published yang dibangun dan dikelola melalui backend portfolio.',
-  ogTitle: 'Projects — Developer Portfolio',
-  ogDescription: 'Daftar project published yang dibangun dan dikelola melalui backend portfolio.',
-  ogType: 'website',
+  title: 'Projects — Web My Porto',
+  description: 'Explore developer projects, case studies, and technical implementations.',
 })
-
-function retry() {
-  refresh()
-}
 </script>
 
 <template>
   <div>
-    <section class="technical-grid border-b border-app-border bg-app-background py-16 md:py-20">
+    <PageHeader
+      eyebrow="Projects"
+      title="A database-driven collection of projects, systems, and technical case studies."
+      description="Browse public portfolio works that are published from the admin dashboard and rendered from the public API."
+    />
+
+    <section class="app-section bg-app-background">
       <div class="app-container">
-        <p class="section-eyebrow">
-          Projects
-        </p>
-
-        <h1 class="mt-4 max-w-3xl text-4xl font-extrabold tracking-tight text-app-text md:text-5xl">
-          Published engineering work and portfolio projects.
-        </h1>
-
-        <p class="mt-5 max-w-2xl text-base leading-8 text-app-muted md:text-lg">
-          Semua project di halaman ini berasal dari Public API dan hanya menampilkan data yang berstatus published.
-        </p>
-      </div>
-    </section>
-
-    <section class="app-section">
-      <div class="app-container">
-        <div class="app-card p-5">
-          <div class="grid gap-4 md:grid-cols-[1fr_240px]">
-            <input
-              v-model="search"
-              type="search"
-              class="rounded-xl border border-app-border bg-white px-4 py-3 text-sm text-app-text outline-none transition placeholder:text-slate-400 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
-              placeholder="Search project by title..."
-            >
-
-            <select
-              v-model="category"
-              class="rounded-xl border border-app-border bg-white px-4 py-3 text-sm text-app-text outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
-            >
-              <option value="">
-                All categories
-              </option>
-              <option
-                v-for="item in categories"
-                :key="item"
-                :value="item"
-              >
-                {{ item }}
-              </option>
-            </select>
+        <div class="mb-8 grid gap-4 rounded-3xl border border-app-border bg-white p-5 shadow-soft md:grid-cols-[1fr_auto] md:items-center">
+          <div>
+            <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-app-muted">
+              Project Explorer
+            </p>
+            <p class="mt-2 text-sm text-app-muted">
+              Search published projects by title, stack, or project context.
+            </p>
           </div>
+
+          <input
+            v-model="search"
+            type="search"
+            placeholder="Search projects..."
+            class="input md:w-80"
+          >
         </div>
 
-        <div
+        <LoadingState
           v-if="pending"
-          class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3"
-        >
-          <LoadingState />
-          <LoadingState />
-          <LoadingState />
-        </div>
+          title="Loading projects"
+          message="Fetching published projects from the public API."
+        />
 
         <ErrorState
           v-else-if="error"
-          class="mt-10"
-          title="Project gagal dimuat"
+          title="Projects failed to load"
           :message="error.message"
-          @retry="retry"
+          @retry="refresh"
         />
 
         <div
-          v-else-if="projects?.length"
-          class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+          v-else-if="filteredProjects.length"
+          class="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
         >
           <ProjectCard
-            v-for="project in projects"
-            :key="project.id"
+            v-for="(project, index) in filteredProjects"
+            :key="project.id || project.slug"
             :project="project"
+            :index="index"
           />
         </div>
 
         <EmptyState
           v-else
-          class="mt-10"
-          title="Project tidak ditemukan"
-          message="Belum ada project published yang cocok dengan filter saat ini."
+          title="No projects found"
+          message="No published project matched your current filter."
         />
       </div>
     </section>

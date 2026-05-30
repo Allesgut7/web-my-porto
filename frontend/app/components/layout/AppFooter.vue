@@ -1,58 +1,48 @@
-<script setup lang="ts">
-const year = new Date().getFullYear()
-
-const { data: profile } = useProfile({
-  lazy: true,
-})
-</script>
-
 <template>
-  <footer class="dark-technical-grid bg-app-dark text-white">
+  <footer class="border-t border-app-border bg-white">
     <div class="app-container py-10">
-      <div class="grid gap-8 md:grid-cols-[1.2fr_0.8fr] md:items-center">
+      <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <div>
-          <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">
-            Developer Portfolio
+          <p class="text-sm font-bold text-app-text">
+            Web My Porto
           </p>
-
-          <p class="mt-3 max-w-xl text-sm leading-6 text-slate-300">
-            Database-driven portfolio built with Nuxt, Go, PostgreSQL, and Supabase Storage.
+          <p class="mt-2 max-w-md text-sm leading-6 text-app-muted">
+            Database-driven developer portfolio built with Nuxt, Go, PostgreSQL, and Supabase Storage.
           </p>
         </div>
 
-        <div class="flex flex-wrap gap-3 md:justify-end">
-          <a
-            v-if="profile?.githubUrl"
-            :href="profile.githubUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white"
+        <div class="flex flex-wrap items-center gap-3">
+          <NuxtLink
+            to="/"
+            class="text-sm font-semibold text-app-muted transition hover:text-brand-primary"
           >
-            GitHub
-          </a>
+            Home
+          </NuxtLink>
 
-          <a
-            v-if="profile?.linkedinUrl"
-            :href="profile.linkedinUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white"
+          <NuxtLink
+            to="/projects"
+            class="text-sm font-semibold text-app-muted transition hover:text-brand-primary"
           >
-            LinkedIn
-          </a>
+            Projects
+          </NuxtLink>
 
-          <a
-            v-if="profile?.email"
-            :href="`mailto:${profile.email}`"
-            class="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white"
+          <NuxtLink
+            to="/admin/login"
+            class="text-sm font-semibold text-app-muted transition hover:text-brand-primary"
           >
-            Email
-          </a>
+            Admin
+          </NuxtLink>
         </div>
       </div>
 
-      <div class="mt-8 border-t border-white/10 pt-6 text-sm text-slate-400">
-        © {{ year }} {{ profile?.fullName || 'Developer' }}. All rights reserved.
+      <div class="mt-8 flex flex-col gap-3 border-t border-app-border pt-6 md:flex-row md:items-center md:justify-between">
+        <p class="text-xs text-app-muted">
+          © {{ new Date().getFullYear() }} Web My Porto. All rights reserved.
+        </p>
+
+        <p class="font-mono text-xs uppercase tracking-[0.2em] text-app-muted">
+          Clean · Technical · Data-driven
+        </p>
       </div>
     </div>
   </footer>

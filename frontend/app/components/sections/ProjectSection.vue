@@ -1,56 +1,57 @@
 <script setup lang="ts">
-import type { ProjectListItem } from '~/types/project'
+type ProjectLike = {
+  id?: string | null
+  title: string
+  slug: string
+  shortDescription?: string | null
+  description?: string | null
+  projectType?: string | null
+  thumbnailUrl?: string | null
+  isFeatured?: boolean | null
+  techStacks?: Array<{ id?: string | null; name?: string | null }>
+}
 
 defineProps<{
-  projects: ProjectListItem[]
+  projects?: ProjectLike[] | null
 }>()
 </script>
 
 <template>
-  <section
-    id="projects"
-    class="app-section"
-  >
+  <section class="app-section bg-white">
     <div class="app-container">
       <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-        <div>
-          <p class="section-eyebrow">
-            02 / Featured Work
-          </p>
-
-          <h2 class="section-title">
-            Selected projects
-          </h2>
-
-          <p class="section-description">
-            Project published yang dikelola dari backend dan ditampilkan otomatis melalui Public API.
-          </p>
-        </div>
+        <SectionHeader
+          eyebrow="Selected Work"
+          title="Projects shaped as practical, tested, and maintainable systems."
+          description="A collection of shipped works, experiments, and portfolio-grade implementations powered by database-driven content."
+        />
 
         <NuxtLink
           to="/projects"
-          class="btn-secondary w-fit"
+          class="btn-secondary shrink-0"
         >
           View all projects
+          <span class="ml-2">→</span>
         </NuxtLink>
       </div>
 
       <div
-        v-if="projects.length"
-        class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+        v-if="projects?.length"
+        class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3"
       >
         <ProjectCard
-          v-for="project in projects"
-          :key="project.id"
+          v-for="(project, index) in projects"
+          :key="project.id || project.slug"
           :project="project"
+          :index="index"
         />
       </div>
 
       <EmptyState
         v-else
-        class="mt-10"
-        title="Belum ada featured project"
-        message="Project published akan tampil otomatis setelah tersedia dari backend."
+        class="mt-12"
+        title="No published projects yet"
+        message="Published projects from the API will appear here."
       />
     </div>
   </section>
