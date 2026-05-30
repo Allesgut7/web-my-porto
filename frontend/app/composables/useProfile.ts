@@ -1,21 +1,20 @@
-import { useAsyncData, useNuxtApp } from '#imports'
-import type { ApiResponse } from '../types/api'
-import type { Profile } from '../types/profile'
+import type { AsyncDataOptions } from '#app'
+import type { Profile, RawProfile } from '~/types/profile'
+import { normalizeProfile } from '~/types/profile'
 
-export const useProfile = () => {
+export function useProfile(options: AsyncDataOptions<Profile> = {}) {
   const { $api } = useNuxtApp()
 
-  const fetchProfile = async () => {
-    const response = await $api<ApiResponse<Profile>>('/profile')
-    return response.data
-  }
-
-  const useProfileData = () => {
-    return useAsyncData('public-profile', fetchProfile)
-  }
-
-  return {
-    fetchProfile,
-    useProfileData,
-  }
+  return useAsyncData<Profile>(
+    'public-profile',
+    async () => {
+      const rawProfile = await $api.get<RawProfile>('/profile')
+      return normalizeProfile(rawProfile)
+    },
+    {
+      server: true,
+      lazy: false,
+      ...options,
+    },
+  )
 }

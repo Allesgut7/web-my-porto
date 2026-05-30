@@ -1,46 +1,53 @@
-import { isRef, unref, type Ref } from 'vue'
-import { useAsyncData, useNuxtApp } from '#app'
-import type { ApiPaginatedResponse, ApiResponse } from '../types/api'
-import type { ProjectDetail, ProjectListItem, ProjectQuery } from '../types/project'
+import type { AsyncDataOptions } from '#app'
+import type { QueryParams } from '~/types/api'
+import type { ProjectDetail, ProjectListItem, RawProject } from '~/types/project'
+import { normalizeProjectDetail, normalizeProjectListItem } from '~/types/project'
 
-export const useProjects = () => {
+export function useProjects(
+  query: QueryParams = {},
+  options: AsyncDataOptions<ProjectListItem[]> = {},
+) {
   const { $api } = useNuxtApp()
 
-  const fetchProjects = async (query: ProjectQuery = {}) => {
-    return await $api<ApiPaginatedResponse<ProjectListItem[]>>('/projects', {
-      query,
-    })
-  }
+  return useAsyncData<ProjectListItem[]>(
+    `public-projects-${JSON.stringify(query)}`,
+    async () => {
+      const response = await $api.getPaginated<RawProject>('/projects', query)
+      return response.data.map(normalizeProjectListItem)
+    },
+    {
+      server: true,
+      lazy: false,
+      ...options,
+    },
+  )
+}
 
-  const fetchProjectBySlug = async (slug: string) => {
-    const response = await $api<ApiResponse<ProjectDetail>>(`/projects/${slug}`)
-    return response.data
-  }
+export function useFeaturedProjects(limit = 3) {
+  return useProjects({
+    page: 1,
+    limit,
+    featured: true,
+    sort: 'display_order',
+  })
+}
 
-  const useProjectsData = (query: Ref<ProjectQuery> | ProjectQuery = {}) => {
-    return useAsyncData(
-      'public-projects',
-      () => fetchProjects(unref(query)),
-      {
-        watch: isRef(query) ? [query] : false,
-      },
-    )
-  }
+export function useProjectDetail(
+  slug: string,
+  options: AsyncDataOptions<ProjectDetail> = {},
+) {
+  const { $api } = useNuxtApp()
 
-  const useProjectDetailData = (slug: string | Ref<string>) => {
-    return useAsyncData(
-      `public-project-${unref(slug)}`,
-      () => fetchProjectBySlug(unref(slug)),
-      {
-        watch: isRef(slug) ? [slug] : false,
-      },
-    )
-  }
-
-  return {
-    fetchProjects,
-    fetchProjectBySlug,
-    useProjectsData,
-    useProjectDetailData,
-  }
+  return useAsyncData<ProjectDetail>(
+    `public-project-${slug}`,
+    async () => {
+      const rawProject = await $api.get<RawProject>(`/projects/${slug}`)
+      return normalizeProjectDetail(rawProject)
+    },
+    {
+      server: true,
+      lazy: false,
+      ...options,
+    },
+  )
 }

@@ -7,6 +7,20 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  components: [
+    {
+      path: '~/components',
+      pathPrefix: false,
+    },
+  ],
+
+  imports: {
+    dirs: [
+      'composables/**',
+      'types/**',
+    ],
+  },
+
   runtimeConfig: {
     public: {
       apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:8080/api',

@@ -23,7 +23,7 @@ docker-logs:
 	docker compose logs -f
 
 db-shell:
-	docker exec -it web_my_porto_postgres psql -U portfolio_user -d portfolio_db
+	docker exec -it web_my_porto_postgres psql -U postgres -d web-my-porto
 
 health:
 	curl http://localhost:8080/api/health

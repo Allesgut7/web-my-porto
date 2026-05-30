@@ -1,62 +1,32 @@
 <script setup lang="ts">
-const currentYear = new Date().getFullYear()
-import { useProfile } from '../../composables/useProfile'
+const year = new Date().getFullYear()
 
-const { useProfileData } = useProfile()
-const { data: profile } = await useProfileData()
+const { data: profile } = useProfile({
+  lazy: true,
+})
 </script>
 
 <template>
-  <footer class="border-t border-slate-800 bg-app-dark text-white">
-    <div class="app-container py-12">
-      <div class="grid gap-10 md:grid-cols-[1.3fr_0.7fr_1fr]">
+  <footer class="dark-technical-grid bg-app-dark text-white">
+    <div class="app-container py-10">
+      <div class="grid gap-8 md:grid-cols-[1.2fr_0.8fr] md:items-center">
         <div>
-          <NuxtLink to="/" class="text-lg font-bold">
-            <span class="text-accent-tech">&lt;</span>{{ profile?.fullName || 'Developer' }}<span class="text-accent-tech">/&gt;</span>
-          </NuxtLink>
+          <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">
+            Developer Portfolio
+          </p>
 
-          <p class="mt-4 max-w-md text-sm leading-6 text-slate-400">
-            {{ profile?.headline || 'Developer portfolio powered by Nuxt, Go, PostgreSQL, and Supabase Storage.' }}
+          <p class="mt-3 max-w-xl text-sm leading-6 text-slate-300">
+            Database-driven portfolio built with Nuxt, Go, PostgreSQL, and Supabase Storage.
           </p>
         </div>
 
-        <nav class="space-y-3" aria-label="Footer navigation">
-          <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-accent-tech">
-            Navigation
-          </p>
-          <NuxtLink to="/" class="block text-sm text-slate-400 hover:text-white">
-            Home
-          </NuxtLink>
-          <NuxtLink to="/projects" class="block text-sm text-slate-400 hover:text-white">
-            Projects
-          </NuxtLink>
-          <NuxtLink to="/#about" class="block text-sm text-slate-400 hover:text-white">
-            About
-          </NuxtLink>
-          <NuxtLink to="/#contact" class="block text-sm text-slate-400 hover:text-white">
-            Contact
-          </NuxtLink>
-        </nav>
-
-        <div class="space-y-3">
-          <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-accent-tech">
-            Links
-          </p>
-
-          <a
-            v-if="profile?.email"
-            :href="`mailto:${profile.email}`"
-            class="block text-sm text-slate-400 hover:text-white"
-          >
-            {{ profile.email }}
-          </a>
-
+        <div class="flex flex-wrap gap-3 md:justify-end">
           <a
             v-if="profile?.githubUrl"
             :href="profile.githubUrl"
             target="_blank"
             rel="noopener noreferrer"
-            class="block text-sm text-slate-400 hover:text-white"
+            class="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white"
           >
             GitHub
           </a>
@@ -66,15 +36,23 @@ const { data: profile } = await useProfileData()
             :href="profile.linkedinUrl"
             target="_blank"
             rel="noopener noreferrer"
-            class="block text-sm text-slate-400 hover:text-white"
+            class="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white"
           >
             LinkedIn
+          </a>
+
+          <a
+            v-if="profile?.email"
+            :href="`mailto:${profile.email}`"
+            class="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white"
+          >
+            Email
           </a>
         </div>
       </div>
 
-      <div class="mt-10 border-t border-slate-800 pt-6 text-sm text-slate-500">
-        © {{ currentYear }} {{ profile?.fullName || 'Developer' }}. Built with Nuxt, Go, PostgreSQL, and Supabase Storage.
+      <div class="mt-8 border-t border-white/10 pt-6 text-sm text-slate-400">
+        © {{ year }} {{ profile?.fullName || 'Developer' }}. All rights reserved.
       </div>
     </div>
   </footer>

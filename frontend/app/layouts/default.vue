@@ -1,13 +1,8 @@
-<script setup lang="ts">
-import AppFooter from '../components/layout/AppFooter.vue'
-import AppNavbar from '../components/layout/AppNavbar.vue'
-</script>
-
 <template>
-  <div class="min-h-screen bg-app-background text-app-text">
-    <AppNavbar />
+  <div class="flex min-h-screen flex-col bg-app-background text-app-text">
+    <PublicNavbar />
 
-    <main>
+    <main class="flex-1">
       <slot />
     </main>
 

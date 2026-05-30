@@ -1,170 +1,127 @@
 <script setup lang="ts">
-import ProjectCard from '../../components/cards/ProjectCard.vue'
-import ContactLinkSection from '../../components/sections/ContactLinkSection.vue'
-import type { ProjectQuery } from '../../types/project'
-import { useProfile } from '../../composables/useProfile'
-import { useProjects } from '../../composables/useProjects'
+// definePageMeta({
+//   layout: 'public',
+// })
 
-const { useProfileData } = useProfile()
+const route = useRoute()
+const router = useRouter()
 
-const { data: profile } = await useProfileData()
+const search = ref(typeof route.query.search === 'string' ? route.query.search : '')
+const category = ref(typeof route.query.category === 'string' ? route.query.category : '')
 
-const search = ref('')
-const category = ref('')
-const sort = ref<'latest' | 'oldest' | 'display_order'>('display_order')
-const page = ref(1)
-
-const query = computed<ProjectQuery>(() => ({
-  page: page.value,
-  limit: 9,
+const query = computed(() => ({
+  page: 1,
+  limit: 12,
+  sort: 'display_order' as const,
   search: search.value || undefined,
   category: category.value || undefined,
-  sort: sort.value,
 }))
 
-const { useProjectsData } = useProjects()
-
-const {
-  data: projectsResponse,
-  pending,
-  error,
-  refresh,
-} = await useProjectsData(query)
-
-const projects = computed(() => projectsResponse.value?.data || [])
-const meta = computed(() => projectsResponse.value?.meta)
-
-const categories = computed(() => {
-  const values = projects.value
-    .map((project) => project.projectType)
-    .filter(Boolean) as string[]
-
-  return [...new Set(values)]
+const { data: projects, pending, error, refresh } = useProjects(query.value, {
+  watch: [query],
 })
 
-watch([search, category, sort], () => {
-  page.value = 1
+const categories = computed(() => {
+  const items = projects.value || []
+  return Array.from(
+    new Set(
+      items
+        .map((project) => project.projectType)
+        .filter(Boolean) as string[],
+    ),
+  )
+})
+
+watch([search, category], () => {
+  router.replace({
+    query: {
+      ...(search.value ? { search: search.value } : {}),
+      ...(category.value ? { category: category.value } : {}),
+    },
+  })
 })
 
 useSeoMeta({
-  title: () => `Projects — ${profile.value?.fullName || 'Developer Portfolio'}`,
-  description:
-    'Selected engineering projects covering backend, data, QA, IoT, dashboards, APIs, and modern web development.',
-  ogTitle: () => `Projects — ${profile.value?.fullName || 'Developer Portfolio'}`,
-  ogDescription:
-    'Selected engineering projects covering backend, data, QA, IoT, dashboards, APIs, and modern web development.',
+  title: 'Projects',
+  description: 'Daftar project published yang dibangun dan dikelola melalui backend portfolio.',
+  ogTitle: 'Projects — Developer Portfolio',
+  ogDescription: 'Daftar project published yang dibangun dan dikelola melalui backend portfolio.',
+  ogType: 'website',
 })
+
+function retry() {
+  refresh()
+}
 </script>
 
 <template>
   <div>
-    <section class="technical-grid app-section">
+    <section class="technical-grid border-b border-app-border bg-app-background py-16 md:py-20">
       <div class="app-container">
         <p class="section-eyebrow">
           Projects
         </p>
 
-        <h1 class="mt-4 max-w-4xl text-4xl font-extrabold tracking-tight text-app-text md:text-5xl">
-          Selected Engineering Projects
+        <h1 class="mt-4 max-w-3xl text-4xl font-extrabold tracking-tight text-app-text md:text-5xl">
+          Published engineering work and portfolio projects.
         </h1>
 
         <p class="mt-5 max-w-2xl text-base leading-8 text-app-muted md:text-lg">
-          A collection of published backend, data, QA, IoT, and web engineering projects loaded from the public API.
+          Semua project di halaman ini berasal dari Public API dan hanya menampilkan data yang berstatus published.
         </p>
       </div>
     </section>
 
-    <section class="pb-16 md:pb-24">
+    <section class="app-section">
       <div class="app-container">
-        <div class="app-card flex flex-col gap-4 p-4 md:flex-row md:items-center">
-          <input
-            v-model="search"
-            type="search"
-            class="input md:flex-1"
-            placeholder="Search projects..."
-            aria-label="Search projects"
-          >
-
-          <select
-            v-model="category"
-            class="input md:w-56"
-            aria-label="Filter project category"
-          >
-            <option value="">
-              All Categories
-            </option>
-            <option
-              v-for="item in categories"
-              :key="item"
-              :value="item"
+        <div class="app-card p-5">
+          <div class="grid gap-4 md:grid-cols-[1fr_240px]">
+            <input
+              v-model="search"
+              type="search"
+              class="rounded-xl border border-app-border bg-white px-4 py-3 text-sm text-app-text outline-none transition placeholder:text-slate-400 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+              placeholder="Search project by title..."
             >
-              {{ item }}
-            </option>
-          </select>
 
-          <select
-            v-model="sort"
-            class="input md:w-48"
-            aria-label="Sort projects"
-          >
-            <option value="display_order">
-              Featured First
-            </option>
-            <option value="latest">
-              Latest
-            </option>
-            <option value="oldest">
-              Oldest
-            </option>
-          </select>
-        </div>
-
-        <div v-if="pending" class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <div
-            v-for="item in 6"
-            :key="item"
-            class="app-card animate-pulse overflow-hidden"
-          >
-            <div class="aspect-[16/10] bg-slate-200" />
-            <div class="space-y-4 p-6">
-              <div class="h-4 w-24 rounded bg-slate-200" />
-              <div class="h-6 w-3/4 rounded bg-slate-200" />
-              <div class="space-y-2">
-                <div class="h-4 rounded bg-slate-200" />
-                <div class="h-4 w-5/6 rounded bg-slate-200" />
-              </div>
-            </div>
+            <select
+              v-model="category"
+              class="rounded-xl border border-app-border bg-white px-4 py-3 text-sm text-app-text outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+            >
+              <option value="">
+                All categories
+              </option>
+              <option
+                v-for="item in categories"
+                :key="item"
+                :value="item"
+              >
+                {{ item }}
+              </option>
+            </select>
           </div>
         </div>
 
-        <div v-else-if="error" class="app-card mt-10 p-8 text-center">
-          <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-accent-main">
-            !
-          </div>
-          <h2 class="mt-5 text-lg font-semibold text-app-text">
-            Unable to load projects.
-          </h2>
-          <p class="mt-2 text-sm text-app-muted">
-            The API might be unavailable. Please try again.
-          </p>
-          <button class="btn-primary mt-6" type="button" @click="() => refresh()">
-            Retry
-          </button>
+        <div
+          v-if="pending"
+          class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+        >
+          <LoadingState />
+          <LoadingState />
+          <LoadingState />
         </div>
 
-        <div v-else-if="projects.length === 0" class="app-card mt-10 p-8 text-center">
-          <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-soft font-mono text-brand-primary">
-            ∅
-          </div>
-          <h2 class="mt-5 text-lg font-semibold text-app-text">
-            No matching projects found.
-          </h2>
-          <p class="mt-2 text-sm text-app-muted">
-            Try using a different keyword or category. If no project is published yet, it will appear after being published from admin.
-          </p>
-        </div>
+        <ErrorState
+          v-else-if="error"
+          class="mt-10"
+          title="Project gagal dimuat"
+          :message="error.message"
+          @retry="retry"
+        />
 
-        <div v-else class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div
+          v-else-if="projects?.length"
+          class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+        >
           <ProjectCard
             v-for="project in projects"
             :key="project.id"
@@ -172,37 +129,13 @@ useSeoMeta({
           />
         </div>
 
-        <div
-          v-if="meta && meta.totalPages > 1"
-          class="mt-10 flex items-center justify-center gap-3"
-        >
-          <button
-            type="button"
-            class="btn-secondary"
-            :disabled="page <= 1"
-            :class="page <= 1 ? 'cursor-not-allowed opacity-50' : ''"
-            @click="page--"
-          >
-            Previous
-          </button>
-
-          <span class="font-mono text-sm text-app-muted">
-            Page {{ meta.page }} of {{ meta.totalPages }}
-          </span>
-
-          <button
-            type="button"
-            class="btn-secondary"
-            :disabled="page >= meta.totalPages"
-            :class="page >= meta.totalPages ? 'cursor-not-allowed opacity-50' : ''"
-            @click="page++"
-          >
-            Next
-          </button>
-        </div>
+        <EmptyState
+          v-else
+          class="mt-10"
+          title="Project tidak ditemukan"
+          message="Belum ada project published yang cocok dengan filter saat ini."
+        />
       </div>
     </section>
-
-    <ContactLinkSection :profile="profile || null" />
   </div>
 </template>
