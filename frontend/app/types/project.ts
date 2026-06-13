@@ -42,6 +42,8 @@ export interface ProjectDetail extends ProjectListItem {
   images: ProjectImage[]
 }
 
+export type RawTechStackInput = RawTechStack | string
+
 export interface RawTechStack {
   id?: string
   name: string
@@ -93,8 +95,8 @@ export interface RawProject {
   createdAt?: string
   updated_at?: string
   updatedAt?: string
-  tech_stacks?: RawTechStack[]
-  techStacks?: RawTechStack[]
+  tech_stacks?: (RawTechStack | string)[]
+  techStacks?: (RawTechStack | string)[]
   images?: RawProjectImage[]
   problem?: string | null
   solution?: string | null
@@ -102,7 +104,10 @@ export interface RawProject {
   role?: string | null
 }
 
-export function normalizeTechStack(stack: RawTechStack): TechStack {
+export function normalizeTechStack(stack: RawTechStack | string): TechStack {
+  if (typeof stack === 'string') {
+    return { name: stack }
+  }
   return {
     id: stack.id,
     name: stack.name,

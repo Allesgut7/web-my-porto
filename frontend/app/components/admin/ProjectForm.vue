@@ -242,6 +242,7 @@ function handleSubmit() {
           <p class="section-eyebrow">Thumbnail</p>
 
           <ThumbnailUpload
+            v-model="form.thumbnailUrl"
             class="mt-6"
 
             :preview-url="form.thumbnailUrl"

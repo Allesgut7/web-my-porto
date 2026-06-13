@@ -1,0 +1,8 @@
+{
+  "name": "Remix: Developer Portfolio",
+  "description": "A modern, elegant technical portfolio showcase for Data Science, Data Analyst, Backend Development, IoT, and Electrical/Embedded Systems.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-primary: #1D4ED8;
+  --color-primary-soft: #EFF6FF;
+  --color-accent-main: #F59E0B;
+  --color-accent-tech: #06B6D4;
+  --color-brand-bg: #F8FAFC;
+  --color-brand-surface: #FFFFFF;
+  --color-brand-text: #0F172A;
+  --color-brand-muted: #64748B;
+  --color-brand-border: #E2E8F0;
+  --color-brand-dark: #020617;
+}
+
+/* Custom global styles for technical background pattern and smooth scroll */
+html {
+  scroll-behavior: smooth;
+  background-color: var(--color-brand-bg);
+  color: var(--color-brand-text);
+  font-family: var(--font-sans);
+}
+
+/* Subtle dot grid pattern with lightweight translation animation */
+@keyframes grid-flow {
+  0% {
+    background-position: 0px 0px;
+  }
+  100% {
+    background-position: 24px 24px;
+  }
+}
+
+.bg-grid-pattern {
+  background-size: 24px 24px;
+  background-image: radial-gradient(circle, var(--color-brand-border) 1px, transparent 1px);
+}
+
+.bg-grid-animate {
+  animation: grid-flow 24s linear infinite;
+}
+
+/* Tech dark dot grid pattern with translation animation */
+.bg-grid-pattern-dark {
+  background-size: 24px 24px;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+}
+
+/* Accent glow nodes */
+@keyframes float-subtle {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.15;
+  }
+  50% {
+    transform: translateY(-10px) scale(1.05);
+    opacity: 0.25;
+  }
+}
+
+.animate-float-glow {
+  animation: float-subtle 12s ease-in-out infinite;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-brand-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-brand-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-muted);
+}
+

@@ -16,33 +16,52 @@ function formatYear(date?: string | null) {
 </script>
 
 <template>
-  <article class="app-card app-card-hover overflow-hidden">
+  <article class="app-card overflow-hidden group transition-all duration-500 hover:-translate-y-2 hover:shadow-deep hover:border-blue-200 gradient-border">
+    <!-- Accent bar -->
+    <div
+      v-if="project.isFeatured"
+      class="card-accent-bar-amber"
+    />
+    <div
+      v-else-if="project.projectType"
+      class="card-accent-bar-cyan"
+    />
+    <div
+      v-else
+      class="card-accent-bar-blue"
+    />
+
     <NuxtLink
       :to="`/projects/${project.slug}`"
       class="block"
       :aria-label="`Lihat detail project ${project.title}`"
     >
-      <div class="technical-grid aspect-[16/10] overflow-hidden bg-brand-soft">
+      <div class="relative aspect-[16/10] overflow-hidden bg-brand-soft">
         <img
           v-if="project.thumbnailUrl"
           :src="project.thumbnailUrl"
           :alt="`Thumbnail project ${project.title}`"
-          class="h-full w-full object-cover transition duration-300 hover:scale-105"
+          class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
           loading="lazy"
         >
 
-        <div
+        <FallbackThumbnail
           v-else
-          class="flex h-full w-full items-center justify-center p-6 text-center"
+          :project-type="project.projectType"
+          :title="project.title"
+        />
+
+        <!-- Hover overlay with gradient -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+        <!-- Year badge on image -->
+        <div
+          v-if="formatYear(project.completedAt || project.startedAt)"
+          class="absolute right-3 top-3"
         >
-          <div>
-            <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-brand-primary">
-              Project
-            </p>
-            <p class="mt-2 text-lg font-bold text-app-text">
-              {{ project.title }}
-            </p>
-          </div>
+          <span class="inline-flex items-center rounded-lg bg-black/50 px-2.5 py-1 font-mono text-xs font-semibold text-white backdrop-blur-sm">
+            {{ formatYear(project.completedAt || project.startedAt) }}
+          </span>
         </div>
       </div>
     </NuxtLink>
@@ -62,19 +81,12 @@ function formatYear(date?: string | null) {
         >
           Featured
         </span>
-
-        <span
-          v-if="formatYear(project.completedAt || project.startedAt)"
-          class="badge-primary"
-        >
-          {{ formatYear(project.completedAt || project.startedAt) }}
-        </span>
       </div>
 
-      <h3 class="mt-4 text-xl font-bold tracking-tight text-app-text">
+      <h3 class="mt-4 text-xl font-bold tracking-tight text-app-text font-display">
         <NuxtLink
           :to="`/projects/${project.slug}`"
-          class="hover:text-brand-primary"
+          class="transition-colors duration-200 hover:text-brand-primary"
         >
           {{ project.title }}
         </NuxtLink>
@@ -88,21 +100,35 @@ function formatYear(date?: string | null) {
         v-if="project.techStacks.length"
         class="mt-5 flex flex-wrap gap-2"
       >
-        <span
+        <TechBadge
           v-for="stack in project.techStacks.slice(0, 5)"
-          :key="stack.id || stack.name"
-          class="rounded-full bg-brand-soft px-3 py-1 text-xs font-medium text-brand-primary"
+          :key="stack.name"
+          :tech="stack"
+        />
+
+        <span
+          v-if="project.techStacks.length > 5"
+          class="badge"
         >
-          {{ stack.name }}
+          +{{ project.techStacks.length - 5 }} more
         </span>
       </div>
 
-      <div class="mt-6 flex items-center justify-between gap-4">
+      <div class="mt-6 flex items-center justify-between gap-4 border-t border-app-border pt-5">
         <NuxtLink
           :to="`/projects/${project.slug}`"
-          class="text-sm font-semibold text-brand-primary hover:text-blue-800"
+          class="text-sm font-semibold text-brand-primary hover:text-blue-800 group/link inline-flex items-center gap-1.5 transition-colors"
         >
-          View case study →
+          View case study
+          <svg
+            class="h-3.5 w-3.5 transition-transform duration-200 group-hover/link:translate-x-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
         </NuxtLink>
 
         <div class="flex gap-3">
@@ -111,7 +137,7 @@ function formatYear(date?: string | null) {
             :href="project.demoUrl"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-sm font-medium text-app-muted hover:text-brand-primary"
+            class="text-sm font-medium text-app-muted hover:text-brand-primary transition-colors"
             @click.stop
           >
             Demo
@@ -122,7 +148,7 @@ function formatYear(date?: string | null) {
             :href="project.repositoryUrl"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-sm font-medium text-app-muted hover:text-brand-primary"
+            class="text-sm font-medium text-app-muted hover:text-brand-primary transition-colors"
             @click.stop
           >
             Repo

@@ -1,8 +1,4 @@
 <script setup lang="ts">
-// definePageMeta({
-//   layout: 'public',
-// })
-
 const route = useRoute()
 const router = useRouter()
 
@@ -43,9 +39,9 @@ watch([search, category], () => {
 
 useSeoMeta({
   title: 'Projects',
-  description: 'Daftar project published yang dibangun dan dikelola melalui backend portfolio.',
+  description: 'Daftar project published — Electrical Engineering, IoT, Data Science, Backend, Machine Learning.',
   ogTitle: 'Projects — Developer Portfolio',
-  ogDescription: 'Daftar project published yang dibangun dan dikelola melalui backend portfolio.',
+  ogDescription: 'Daftar project published — Electrical Engineering, IoT, Data Science, Backend, Machine Learning.',
   ogType: 'website',
 })
 
@@ -56,19 +52,31 @@ function retry() {
 
 <template>
   <div>
-    <section class="technical-grid border-b border-app-border bg-app-background py-16 md:py-20">
-      <div class="app-container">
+    <section class="relative overflow-hidden border-b border-app-border bg-app-background py-16 md:py-20">
+      <div class="bg-grid-pattern bg-grid-animate absolute inset-0 opacity-40" />
+      <CircuitPattern :opacity="0.06" class="absolute inset-0" />
+
+      <div class="app-container relative z-10">
         <p class="section-eyebrow">
           Projects
         </p>
 
-        <h1 class="mt-4 max-w-3xl text-4xl font-extrabold tracking-tight text-app-text md:text-5xl">
+        <h1 class="mt-4 max-w-3xl text-4xl font-extrabold tracking-tight text-app-text md:text-5xl font-display">
           Published engineering work and portfolio projects.
         </h1>
 
         <p class="mt-5 max-w-2xl text-base leading-8 text-app-muted md:text-lg">
           Semua project di halaman ini berasal dari Public API dan hanya menampilkan data yang berstatus published.
         </p>
+
+        <div class="mt-6 flex flex-wrap gap-3 text-sm text-app-muted">
+          <span class="badge-tech">
+            Data from API
+          </span>
+          <span class="badge-primary">
+            {{ projects?.length || 0 }} projects
+          </span>
+        </div>
       </div>
     </section>
 
@@ -79,13 +87,13 @@ function retry() {
             <input
               v-model="search"
               type="search"
-              class="rounded-xl border border-app-border bg-white px-4 py-3 text-sm text-app-text outline-none transition placeholder:text-slate-400 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+              class="input"
               placeholder="Search project by title..."
             >
 
             <select
               v-model="category"
-              class="rounded-xl border border-app-border bg-white px-4 py-3 text-sm text-app-text outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+              class="input"
             >
               <option value="">
                 All categories
@@ -122,11 +130,13 @@ function retry() {
           v-else-if="projects?.length"
           class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3"
         >
-          <ProjectCard
-            v-for="project in projects"
+          <AnimatedContainer
+            v-for="(project, index) in projects"
             :key="project.id"
-            :project="project"
-          />
+            :delay="(index % 6) * 100"
+          >
+            <ProjectCard :project="project" />
+          </AnimatedContainer>
         </div>
 
         <EmptyState

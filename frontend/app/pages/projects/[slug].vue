@@ -1,8 +1,4 @@
 <script setup lang="ts">
-// definePageMeta({
-//   layout: 'public',
-// })
-
 const route = useRoute()
 const slug = computed(() => String(route.params.slug || ''))
 
@@ -11,7 +7,7 @@ const { data: project, pending, error, refresh } = useProjectDetail(slug.value, 
 })
 
 useSeoMeta({
-  title: () => project.value?.title || 'Project Detail',
+  title: () => project.value?.title ? `${project.value.title} — Project` : 'Project Detail',
   description: () =>
     project.value?.shortDescription ||
     project.value?.description ||
@@ -45,13 +41,26 @@ function formatDate(date?: string | null) {
 
 <template>
   <div>
-    <section class="technical-grid border-b border-app-border bg-app-background py-16 md:py-20">
-      <div class="app-container-wide">
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden border-b border-app-border bg-app-background py-16 md:py-20">
+      <div class="bg-grid-pattern bg-grid-animate absolute inset-0 opacity-40" />
+      <CircuitPattern :opacity="0.06" class="absolute inset-0" />
+
+      <div class="app-container-wide relative z-10">
         <NuxtLink
           to="/projects"
-          class="text-sm font-semibold text-brand-primary hover:text-blue-800"
+          class="group inline-flex items-center gap-1.5 text-sm font-semibold text-brand-primary hover:text-blue-800 transition-colors"
         >
-          ← Back to projects
+          <svg
+            class="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+          </svg>
+          Back to projects
         </NuxtLink>
 
         <LoadingState
@@ -87,17 +96,29 @@ function formatDate(date?: string | null) {
             </span>
 
             <span class="badge-primary">
-              Published
+              Case Study
             </span>
           </div>
 
-          <h1 class="mt-5 max-w-4xl text-4xl font-extrabold tracking-tight text-app-text md:text-5xl">
+          <h1 class="mt-5 max-w-4xl text-4xl font-extrabold tracking-tight text-app-text md:text-5xl font-display">
             {{ project.title }}
           </h1>
 
           <p class="mt-5 max-w-3xl text-base leading-8 text-app-muted md:text-lg">
             {{ project.shortDescription || project.description || 'Detail project belum memiliki deskripsi.' }}
           </p>
+
+          <!-- Tech stack badges -->
+          <div
+            v-if="project.techStacks.length"
+            class="mt-6 flex flex-wrap gap-2"
+          >
+            <TechBadge
+              v-for="stack in project.techStacks"
+              :key="stack.name"
+              :tech="stack"
+            />
+          </div>
 
           <div class="mt-8 flex flex-wrap gap-3">
             <a
@@ -134,13 +155,15 @@ function formatDate(date?: string | null) {
       </div>
     </section>
 
+    <!-- Content Section -->
     <section
       v-if="project"
       class="app-section"
     >
       <div class="app-container-wide grid gap-8 lg:grid-cols-[1fr_360px]">
         <article class="space-y-8">
-          <div class="technical-grid aspect-[16/9] overflow-hidden rounded-panel border border-app-border bg-brand-soft shadow-soft">
+          <!-- Hero Image -->
+          <div class="aspect-[16/9] overflow-hidden rounded-panel border border-app-border bg-brand-soft shadow-soft">
             <img
               v-if="project.thumbnailUrl"
               :src="project.thumbnailUrl"
@@ -149,21 +172,14 @@ function formatDate(date?: string | null) {
               loading="eager"
             >
 
-            <div
+            <FallbackThumbnail
               v-else
-              class="flex h-full w-full items-center justify-center p-8 text-center"
-            >
-              <div>
-                <p class="section-eyebrow">
-                  Project Preview
-                </p>
-                <p class="mt-3 text-2xl font-bold text-app-text">
-                  {{ project.title }}
-                </p>
-              </div>
-            </div>
+              :project-type="project.projectType"
+              :title="project.title"
+            />
           </div>
 
+          <!-- Overview -->
           <div class="app-card p-6 md:p-8">
             <p class="section-eyebrow">
               Overview
@@ -176,13 +192,14 @@ function formatDate(date?: string | null) {
             </div>
           </div>
 
+          <!-- Problem / Solution / Impact -->
           <div
             v-if="project.problem || project.solution || project.impact"
             class="grid gap-6 md:grid-cols-3"
           >
             <div
               v-if="project.problem"
-              class="app-card p-6"
+              class="app-card p-6 border-l-4 border-l-blue-500"
             >
               <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-brand-primary">
                 Problem
@@ -194,9 +211,9 @@ function formatDate(date?: string | null) {
 
             <div
               v-if="project.solution"
-              class="app-card p-6"
+              class="app-card p-6 border-l-4 border-l-cyan-500"
             >
-              <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-cyan-700">
+              <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-accent-tech">
                 Solution
               </p>
               <p class="mt-4 text-sm leading-6 text-app-muted">
@@ -206,9 +223,9 @@ function formatDate(date?: string | null) {
 
             <div
               v-if="project.impact"
-              class="app-card p-6"
+              class="app-card p-6 border-l-4 border-l-amber-500"
             >
-              <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">
+              <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-accent-main">
                 Impact
               </p>
               <p class="mt-4 text-sm leading-6 text-app-muted">
@@ -217,6 +234,7 @@ function formatDate(date?: string | null) {
             </div>
           </div>
 
+          <!-- Gallery -->
           <div
             v-if="project.images.length"
             class="app-card p-6 md:p-8"
@@ -229,12 +247,12 @@ function formatDate(date?: string | null) {
               <figure
                 v-for="image in project.images"
                 :key="image.id"
-                class="overflow-hidden rounded-2xl border border-app-border bg-app-background"
+                class="group overflow-hidden rounded-2xl border border-app-border bg-app-background transition-all duration-300 hover:shadow-card"
               >
                 <img
                   :src="image.imageUrl"
                   :alt="image.caption || `Screenshot project ${project.title}`"
-                  class="aspect-video w-full object-cover"
+                  class="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   loading="lazy"
                 >
 
@@ -249,7 +267,9 @@ function formatDate(date?: string | null) {
           </div>
         </article>
 
+        <!-- Sidebar -->
         <aside class="space-y-6">
+          <!-- Metadata -->
           <div class="app-card p-6">
             <p class="section-eyebrow">
               Metadata
@@ -290,6 +310,7 @@ function formatDate(date?: string | null) {
             </dl>
           </div>
 
+          <!-- Tech Stack -->
           <div
             v-if="project.techStacks.length"
             class="app-card p-6"
@@ -299,16 +320,15 @@ function formatDate(date?: string | null) {
             </p>
 
             <div class="mt-5 flex flex-wrap gap-2">
-              <span
+              <TechBadge
                 v-for="stack in project.techStacks"
-                :key="stack.id || stack.name"
-                class="badge-tech"
-              >
-                {{ stack.name }}
-              </span>
+                :key="stack.name"
+                :tech="stack"
+              />
             </div>
           </div>
 
+          <!-- Links -->
           <div class="app-card p-6">
             <p class="section-eyebrow">
               Links
@@ -353,6 +373,19 @@ function formatDate(date?: string | null) {
               </p>
             </div>
           </div>
+
+          <!-- Back to projects -->
+          <NuxtLink
+            to="/projects"
+            class="app-card block p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-card group"
+          >
+            <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-brand-primary">
+              &larr; All Projects
+            </p>
+            <p class="mt-2 text-sm font-medium text-app-muted group-hover:text-app-text transition-colors">
+              View more engineering work
+            </p>
+          </NuxtLink>
         </aside>
       </div>
     </section>
