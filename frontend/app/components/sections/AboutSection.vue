@@ -89,10 +89,11 @@ const stats = computed(() => [
 <template>
   <section
     id="about"
-    class="app-section relative overflow-hidden bg-about-gradient dark:bg-slate-950"
+    class="app-section relative overflow-hidden bg-about-gradient"
   >
-    <div class="glow-orb animate-float-glow -left-32 top-1/3 h-80 w-80 bg-blue-600/[0.08]" />
-    <div class="glow-orb animate-float-glow -right-20 bottom-1/4 h-64 w-64 bg-cyan-500/[0.06]" style="animation-delay: 6s;" />
+    <div class="glow-orb animate-float-glow -left-32 top-1/3 h-80 w-80 bg-blue-600/[0.12]" />
+    <div class="glow-orb animate-float-glow -right-20 bottom-1/4 h-64 w-64 bg-cyan-500/[0.10]" style="animation-delay: 6s;" />
+    <div class="glow-orb animate-float-glow left-1/2 -bottom-20 h-48 w-48 bg-blue-400/[0.08]" style="animation-delay: 12s;" />
 
     <div class="app-container relative z-10">
       <AnimatedContainer>

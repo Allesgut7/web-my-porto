@@ -915,16 +915,43 @@ html {
   pointer-events: none;
 }
 
-/* Section gradient backgrounds */
+/* Section gradient backgrounds — more colorful */
 .bg-about-gradient {
-  background: linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 30%, rgba(239,246,255,0.3) 60%, #F8FAFC 100%);
+  background: linear-gradient(180deg, #EFF6FF 0%, #FFFFFF 35%, #F0FDFA 65%, #F8FAFC 100%);
 }
 
 .bg-project-gradient {
-  background: linear-gradient(180deg, #FFFFFF 0%, rgba(248,250,252,0.6) 50%, #FFFFFF 100%);
+  background: linear-gradient(180deg, #FFFFFF 0%, #F0FDFA 40%, #ECFEFF 70%, #FFFFFF 100%);
 }
 
-.dark .bg-about-gradient,
+.bg-skills-gradient {
+  background: linear-gradient(135deg, #EFF6FF 0%, #ECFEFF 50%, #F0F9FF 100%);
+}
+
+.bg-experience-gradient {
+  background: linear-gradient(180deg, #F0F7FF 0%, #FFFFFF 40%, #F0FDFA 60%, #F8FAFC 100%);
+}
+
+.bg-achievements-gradient {
+  background: linear-gradient(180deg, #FFFBEB 0%, #FFFFFF 40%, #EFF6FF 70%, #F8FAFC 100%);
+}
+
+.dark .bg-about-gradient {
+  background: linear-gradient(180deg, #0C1222 0%, #020617 40%, #0C1A2E 70%, #020617 100%);
+}
+
 .dark .bg-project-gradient {
-  background: #020617;
+  background: linear-gradient(180deg, #020617 0%, #0C1A2E 40%, #0C1222 70%, #020617 100%);
+}
+
+.dark .bg-skills-gradient {
+  background: linear-gradient(135deg, #0C1222 0%, #0C1A2E 50%, #0C1222 100%);
+}
+
+.dark .bg-experience-gradient {
+  background: linear-gradient(180deg, #0C1222 0%, #020617 40%, #0C1A2E 70%, #020617 100%);
+}
+
+.dark .bg-achievements-gradient {
+  background: linear-gradient(180deg, #1A1508 0%, #020617 40%, #0C1222 70%, #020617 100%);
 }

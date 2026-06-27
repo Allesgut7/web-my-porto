@@ -37,9 +37,10 @@ function typeBadgeClass(type: string): string {
 <template>
   <section
     id="experience"
-    class="app-section relative overflow-hidden"
+    class="app-section relative overflow-hidden bg-experience-gradient"
   >
-    <div class="absolute inset-0 bg-gradient-to-b from-white dark:from-slate-950 via-slate-50/50 dark:via-slate-800/50 to-white dark:to-slate-950" />
+    <div class="glow-orb animate-float-glow -left-20 top-1/4 h-72 w-72 bg-blue-600/[0.08]" />
+    <div class="glow-orb animate-float-glow right-0 bottom-1/3 h-64 w-64 bg-cyan-500/[0.06]" style="animation-delay: 4s;" />
 
     <div class="app-container relative z-10">
       <AnimatedContainer>

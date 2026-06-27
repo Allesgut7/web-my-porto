@@ -65,7 +65,7 @@ function retryProjects() {
       />
 
       <!-- Gradient transition: Hero → About -->
-      <div class="relative h-16 bg-gradient-to-b from-white to-app-background dark:from-slate-950 dark:to-slate-950" />
+      <div class="relative h-16 bg-gradient-to-b from-white via-blue-50 to-blue-50/50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950" />
 
       <AboutSection
         :profile="profile"
@@ -74,9 +74,9 @@ function retryProjects() {
       />
 
       <!-- Gradient transition: About → Projects -->
-      <div class="relative h-20 bg-gradient-to-b from-app-background via-white to-white dark:from-slate-950 dark:via-slate-950 dark:to-slate-950">
+      <div class="relative h-20 bg-gradient-to-b from-cyan-50/30 via-white to-cyan-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
         <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-          <path d="M0 60V30C240 10 480 0 720 10C960 20 1200 40 1440 30V60H0Z" :fill="isDark ? '#020617' : 'white'" />
+          <path d="M0 60V30C240 10 480 0 720 10C960 20 1200 40 1440 30V60H0Z" :fill="isDark ? '#020617' : '#F0FDFA'" />
         </svg>
       </div>
 
@@ -102,12 +102,12 @@ function retryProjects() {
       />
 
       <!-- Gradient transition: Projects → Skills -->
-      <div class="relative h-16 bg-gradient-to-b from-white to-app-background dark:from-slate-950 dark:to-slate-950" />
+      <div class="relative h-16 bg-gradient-to-b from-white via-blue-50/50 to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950" />
 
       <SkillsSection />
 
       <!-- Gradient transition: Skills → Contact -->
-      <div class="relative h-20 bg-gradient-to-b from-app-background via-slate-100 to-app-dark dark:from-slate-950 dark:via-slate-900 dark:to-slate-950" />
+      <div class="relative h-20 bg-gradient-to-b from-blue-50/30 via-slate-100 to-app-dark dark:from-slate-950 dark:via-slate-900 dark:to-slate-950" />
 
       <ContactSection :profile="profile" />
     </template>

@@ -31,9 +31,10 @@ function getSkillsByCategory(category: string) {
 <template>
   <section
     id="skills"
-    class="app-section relative overflow-hidden"
+    class="app-section relative overflow-hidden bg-skills-gradient"
   >
-    <div class="absolute inset-0 bg-gradient-to-b from-slate-50/50 dark:from-slate-800/50 via-white dark:via-slate-900 to-slate-50/30 dark:to-slate-800/30" />
+    <div class="glow-orb animate-float-glow -right-20 top-1/4 h-72 w-72 bg-blue-500/[0.10]" />
+    <div class="glow-orb animate-float-glow -left-16 bottom-1/3 h-64 w-64 bg-cyan-500/[0.08]" style="animation-delay: 5s;" />
 
     <div class="app-container relative z-10">
       <AnimatedContainer>

@@ -22,11 +22,11 @@ function formatYear(date?: string | null) {
 <template>
   <section
     id="projects"
-    class="app-section relative overflow-hidden bg-project-gradient dark:bg-slate-950"
+    class="app-section relative overflow-hidden bg-project-gradient"
   >
-    <!-- Glow orbs -->
-    <div class="glow-orb animate-float-glow right-0 top-0 h-96 w-96 bg-cyan-500/[0.03]" />
-    <div class="glow-orb animate-float-glow -left-20 bottom-1/3 h-72 w-72 bg-blue-500/[0.03]" style="animation-delay: 5s;" />
+    <!-- Glow orbs — boosted -->
+    <div class="glow-orb animate-float-glow right-0 top-0 h-96 w-96 bg-cyan-500/[0.10]" />
+    <div class="glow-orb animate-float-glow -left-20 bottom-1/3 h-72 w-72 bg-blue-500/[0.08]" style="animation-delay: 5s;" />
 
     <div class="app-container relative z-10">
       <!-- Section Header -->

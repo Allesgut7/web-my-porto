@@ -22,9 +22,10 @@ function categoryBadgeClass(category: string | null | undefined): string {
 <template>
   <section
     id="achievements"
-    class="app-section relative overflow-hidden"
+    class="app-section relative overflow-hidden bg-achievements-gradient"
   >
-    <div class="absolute inset-0 bg-gradient-to-b from-white dark:from-slate-950 via-slate-50/50 dark:via-slate-800/50 to-white dark:to-slate-950" />
+    <div class="glow-orb animate-float-glow -right-16 top-1/3 h-72 w-72 bg-amber-500/[0.08]" />
+    <div class="glow-orb animate-float-glow -left-20 bottom-1/4 h-64 w-64 bg-blue-500/[0.06]" style="animation-delay: 5s;" />
 
     <div class="app-container relative z-10">
       <AnimatedContainer>
