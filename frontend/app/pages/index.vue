@@ -64,7 +64,21 @@ function retryProjects() {
         :tech-count="techCount"
       />
 
+      <!-- Gradient transition: Hero → About -->
       <div class="relative h-16 bg-gradient-to-b from-white to-app-background dark:from-slate-950 dark:to-slate-950" />
+
+      <AboutSection
+        :profile="profile"
+        :project-count="projectCount"
+        :tech-count="techCount"
+      />
+
+      <!-- Gradient transition: About → Projects -->
+      <div class="relative h-20 bg-gradient-to-b from-app-background via-white to-white dark:from-slate-950 dark:via-slate-950 dark:to-slate-950">
+        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <path d="M0 60V30C240 10 480 0 720 10C960 20 1200 40 1440 30V60H0Z" :fill="isDark ? '#020617' : 'white'" />
+        </svg>
+      </div>
 
       <section v-if="projectsPending" class="app-section">
         <div class="app-container grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -87,15 +101,13 @@ function retryProjects() {
         :projects="projects || []"
       />
 
-      <div class="relative h-20 bg-gradient-to-b from-white via-slate-100 to-app-background dark:from-slate-950 dark:via-slate-900 dark:to-slate-950" />
+      <!-- Gradient transition: Projects → Skills -->
+      <div class="relative h-16 bg-gradient-to-b from-white to-app-background dark:from-slate-950 dark:to-slate-950" />
 
       <SkillsSection />
 
-      <div class="relative h-20 bg-gradient-to-b from-app-background via-white to-white dark:from-slate-950 dark:via-slate-950 dark:to-slate-950">
-        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-          <path d="M0 60V30C240 10 480 0 720 10C960 20 1200 40 1440 30V60H0Z" :fill="isDark ? '#020617' : 'white'" />
-        </svg>
-      </div>
+      <!-- Gradient transition: Skills → Contact -->
+      <div class="relative h-20 bg-gradient-to-b from-app-background via-slate-100 to-app-dark dark:from-slate-950 dark:via-slate-900 dark:to-slate-950" />
 
       <ContactSection :profile="profile" />
     </template>
