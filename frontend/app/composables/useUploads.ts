@@ -12,6 +12,14 @@ export function useUploads() {
     fileType: ImageFileType = 'thumbnail',
     folder?: string,
   ): Promise<UploadedFile> {
+    const MAX_IMAGE_SIZE = 5 * 1024 * 1024
+    if (file.size > MAX_IMAGE_SIZE) {
+      throw createError({
+        statusCode: 413,
+        statusMessage: 'Ukuran file gambar maksimal 5 MB.',
+      })
+    }
+
     const formData = new FormData()
     formData.append('file', file)
     formData.append('fileType', fileType)
@@ -42,6 +50,14 @@ export function useUploads() {
     fileType: DocumentFileType = 'document',
     folder?: string,
   ): Promise<UploadedFile> {
+    const MAX_DOC_SIZE = 10 * 1024 * 1024
+    if (file.size > MAX_DOC_SIZE) {
+      throw createError({
+        statusCode: 413,
+        statusMessage: 'Ukuran file dokumen maksimal 10 MB.',
+      })
+    }
+
     const formData = new FormData()
     formData.append('file', file)
     formData.append('fileType', fileType)

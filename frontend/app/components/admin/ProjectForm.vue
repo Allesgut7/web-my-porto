@@ -71,8 +71,9 @@ function handleSubmit() {
 
           <div class="mt-6 space-y-5">
             <div>
-              <label class="text-sm font-semibold text-app-text">Title</label>
+              <label for="pf-title" class="text-sm font-semibold text-app-text">Title</label>
               <input
+                id="pf-title"
                 :value="form.title"
                 type="text"
                 class="input mt-2"
@@ -84,8 +85,9 @@ function handleSubmit() {
             </div>
 
             <div>
-              <label class="text-sm font-semibold text-app-text">Slug</label>
+              <label for="pf-slug" class="text-sm font-semibold text-app-text">Slug</label>
               <input
+                id="pf-slug"
                 :value="form.slug"
                 type="text"
                 class="input mt-2 font-mono"
@@ -96,8 +98,9 @@ function handleSubmit() {
             </div>
 
             <div>
-              <label class="text-sm font-semibold text-app-text">Short Description</label>
+              <label for="pf-short-desc" class="text-sm font-semibold text-app-text">Short Description</label>
               <textarea
+                id="pf-short-desc"
                 :value="form.shortDescription"
                 class="input mt-2 min-h-28"
                 placeholder="Deskripsi singkat project..."
@@ -106,8 +109,9 @@ function handleSubmit() {
             </div>
 
             <div>
-              <label class="text-sm font-semibold text-app-text">Description</label>
+              <label for="pf-desc" class="text-sm font-semibold text-app-text">Description</label>
               <textarea
+                id="pf-desc"
                 :value="form.description"
                 class="input mt-2 min-h-44"
                 placeholder="Deskripsi detail project..."
@@ -122,8 +126,9 @@ function handleSubmit() {
 
           <div class="mt-6 grid gap-5 md:grid-cols-3">
             <div>
-              <label class="text-sm font-semibold text-app-text">Demo URL</label>
+              <label for="pf-demo" class="text-sm font-semibold text-app-text">Demo URL</label>
               <input
+                id="pf-demo"
                 :value="form.demoUrl"
                 type="url"
                 class="input mt-2"
@@ -133,8 +138,9 @@ function handleSubmit() {
             </div>
 
             <div>
-              <label class="text-sm font-semibold text-app-text">Repository URL</label>
+              <label for="pf-repo" class="text-sm font-semibold text-app-text">Repository URL</label>
               <input
+                id="pf-repo"
                 :value="form.repositoryUrl"
                 type="url"
                 class="input mt-2"
@@ -144,8 +150,9 @@ function handleSubmit() {
             </div>
 
             <div>
-              <label class="text-sm font-semibold text-app-text">Documentation URL</label>
+              <label for="pf-docs" class="text-sm font-semibold text-app-text">Documentation URL</label>
               <input
+                id="pf-docs"
                 :value="form.documentationUrl"
                 type="url"
                 class="input mt-2"
@@ -163,8 +170,9 @@ function handleSubmit() {
 
           <div class="mt-6 space-y-5">
             <div>
-              <label class="text-sm font-semibold text-app-text">Status</label>
+              <label for="pf-status" class="text-sm font-semibold text-app-text">Status</label>
               <select
+                id="pf-status"
                 :value="form.status"
                 class="input mt-2"
                 @change="updateField('status', ($event.target as HTMLSelectElement).value as ProjectStatus)"
@@ -180,8 +188,9 @@ function handleSubmit() {
             </div>
 
             <div>
-              <label class="text-sm font-semibold text-app-text">Project Type</label>
+              <label for="pf-type" class="text-sm font-semibold text-app-text">Project Type</label>
               <input
+                id="pf-type"
                 :value="form.projectType"
                 type="text"
                 class="input mt-2"
@@ -191,8 +200,9 @@ function handleSubmit() {
             </div>
 
             <div>
-              <label class="text-sm font-semibold text-app-text">Display Order</label>
+              <label for="pf-order" class="text-sm font-semibold text-app-text">Display Order</label>
               <input
+                id="pf-order"
                 :value="form.displayOrder"
                 type="number"
                 class="input mt-2"
@@ -217,8 +227,9 @@ function handleSubmit() {
 
           <div class="mt-6 space-y-5">
             <div>
-              <label class="text-sm font-semibold text-app-text">Started At</label>
+              <label for="pf-started" class="text-sm font-semibold text-app-text">Started At</label>
               <input
+                id="pf-started"
                 :value="form.startedAt"
                 type="date"
                 class="input mt-2"
@@ -227,8 +238,9 @@ function handleSubmit() {
             </div>
 
             <div>
-              <label class="text-sm font-semibold text-app-text">Completed At</label>
+              <label for="pf-completed" class="text-sm font-semibold text-app-text">Completed At</label>
               <input
+                id="pf-completed"
                 :value="form.completedAt"
                 type="date"
                 class="input mt-2"
@@ -249,11 +261,6 @@ function handleSubmit() {
             @uploaded="handleThumbnailUploaded"
           />
         </div>
-
-        <!-- <div class="mt-4 rounded-xl bg-slate-50 p-3 font-mono text-xs text-app-muted">
-          thumbnailFileId: {{ form.thumbnailFileId || '-' }}<br>
-          thumbnailUrl: {{ form.thumbnailUrl || '-' }}
-        </div> -->
 
         <div class="app-card p-6">
           <button

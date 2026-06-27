@@ -3,8 +3,8 @@ package dto
 type CreateProjectRequest struct {
 	Title            string   `json:"title" validate:"required,max=255"`
 	Slug             string   `json:"slug" validate:"required,max=255"`
-	ShortDescription *string  `json:"shortDescription"`
-	Description      *string  `json:"description"`
+	ShortDescription *string  `json:"shortDescription" validate:"omitempty,max=1000"`
+	Description      *string  `json:"description" validate:"omitempty,max=50000"`
 	ProjectType      *string  `json:"projectType" validate:"omitempty,max=100"`
 	Status           string   `json:"status" validate:"required,oneof=draft published archived"`
 	DemoURL          *string  `json:"demoUrl" validate:"omitempty,url"`
@@ -21,8 +21,8 @@ type CreateProjectRequest struct {
 type UpdateProjectRequest struct {
 	Title            string   `json:"title" validate:"required,max=255"`
 	Slug             string   `json:"slug" validate:"required,max=255"`
-	ShortDescription *string  `json:"shortDescription"`
-	Description      *string  `json:"description"`
+	ShortDescription *string  `json:"shortDescription" validate:"omitempty,max=1000"`
+	Description      *string  `json:"description" validate:"omitempty,max=50000"`
 	ProjectType      *string  `json:"projectType" validate:"omitempty,max=100"`
 	Status           string   `json:"status" validate:"required,oneof=draft published archived"`
 	DemoURL          *string  `json:"demoUrl" validate:"omitempty,url"`

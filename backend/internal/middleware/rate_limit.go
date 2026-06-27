@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
 	"sync"
 	"time"
@@ -16,22 +17,39 @@ type clientRateLimitInfo struct {
 }
 
 type InMemoryRateLimiter struct {
-	mu      sync.Mutex
-	clients map[string]*clientRateLimitInfo
-	limit   int
-	window  time.Duration
+	mu         sync.Mutex
+	clients    map[string]*clientRateLimitInfo
+	limit      int
+	window     time.Duration
+	maxClients int
+	message    string
 }
 
 func NewInMemoryRateLimiter(limit int, window time.Duration) *InMemoryRateLimiter {
+	return NewInMemoryRateLimiterWithCap(limit, window, 10000)
+}
+
+func NewInMemoryRateLimiterWithCap(limit int, window time.Duration, maxClients int) *InMemoryRateLimiter {
+	if maxClients <= 0 {
+		maxClients = 10000
+	}
+
 	limiter := &InMemoryRateLimiter{
-		clients: make(map[string]*clientRateLimitInfo),
-		limit:   limit,
-		window:  window,
+		clients:    make(map[string]*clientRateLimitInfo),
+		limit:      limit,
+		window:     window,
+		maxClients: maxClients,
+		message:    "Too many requests, please try again later",
 	}
 
 	go limiter.cleanupExpiredClients()
 
 	return limiter
+}
+
+func (l *InMemoryRateLimiter) WithMessage(msg string) *InMemoryRateLimiter {
+	l.message = msg
+	return l
 }
 
 func (l *InMemoryRateLimiter) Middleware() gin.HandlerFunc {
@@ -61,8 +79,8 @@ func (l *InMemoryRateLimiter) Middleware() gin.HandlerFunc {
 
 			l.mu.Unlock()
 
-			ctx.Header("Retry-After", time.Duration(retryAfter).String())
-			utils.ErrorResponse(ctx, http.StatusTooManyRequests, "Too many login attempts, please try again later", nil)
+			ctx.Header("Retry-After", fmt.Sprintf("%d", retryAfter))
+			utils.ErrorResponse(ctx, http.StatusTooManyRequests, l.message, nil)
 			ctx.Abort()
 			return
 		}
@@ -87,6 +105,25 @@ func (l *InMemoryRateLimiter) cleanupExpiredClients() {
 		for clientIP, info := range l.clients {
 			if now.After(info.ResetTime) {
 				delete(l.clients, clientIP)
+			}
+		}
+
+		if len(l.clients) > l.maxClients {
+			toEvict := len(l.clients) - l.maxClients
+			for i := 0; i < toEvict; i++ {
+				oldest := now
+				var oldestKey string
+				for k, v := range l.clients {
+					if v.ResetTime.Before(oldest) {
+						oldest = v.ResetTime
+						oldestKey = k
+					}
+				}
+				if oldestKey != "" {
+					delete(l.clients, oldestKey)
+				} else {
+					break
+				}
 			}
 		}
 

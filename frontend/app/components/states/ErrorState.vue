@@ -14,7 +14,7 @@ function handleRetry() {
 </script>
 
 <template>
-  <div class="app-card border-red-100 bg-red-50/50 p-6 md:p-8">
+  <div role="alert" aria-live="assertive" class="app-card border-red-100 bg-red-50/50 p-6 md:p-8">
     <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-red-600">
       Request Failed
     </p>

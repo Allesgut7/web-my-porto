@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Profile } from '~/types/profile'
+import { safeUrl } from '~/utils/url'
 
 defineProps<{
   profile: Profile
@@ -210,7 +211,7 @@ const stats = computed(() => [
             </p>
             <a
               v-if="profile.websiteUrl"
-              :href="profile.websiteUrl"
+              :href="safeUrl(profile.websiteUrl) || undefined"
               target="_blank"
               rel="noopener noreferrer"
               class="mt-2.5 block font-bold text-app-text hover:text-brand-primary font-display text-lg transition-colors"

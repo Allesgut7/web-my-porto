@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Profile } from '~/types/profile'
+import { safeUrl } from '~/utils/url'
 
 defineProps<{
   profile: Profile
@@ -136,7 +137,7 @@ onUnmounted(() => {
 
             <a
               v-if="profile.cvUrl"
-              :href="profile.cvUrl"
+              :href="safeUrl(profile.cvUrl) || undefined"
               target="_blank"
               rel="noopener noreferrer"
               class="btn-secondary px-8 py-4 text-base"
@@ -185,6 +186,7 @@ onUnmounted(() => {
 
               <!-- Animated topology SVG -->
               <svg
+                aria-hidden="true"
                 class="mx-auto h-72 w-full relative z-10"
                 viewBox="0 0 400 280"
                 xmlns="http://www.w3.org/2000/svg"

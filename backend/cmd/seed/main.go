@@ -1,8 +1,11 @@
 package main
 
 import (
+	"crypto/rand"
 	"errors"
+	"fmt"
 	"log"
+	"math/big"
 
 	"gorm.io/gorm"
 
@@ -50,7 +53,12 @@ func seedAdminUser(db *gorm.DB) error {
 		return err
 	}
 
-	passwordHash, err := utils.HashPassword("admin12345")
+	password, err := generateRandomPassword(16)
+	if err != nil {
+		return fmt.Errorf("failed to generate random password: %w", err)
+	}
+
+	passwordHash, err := utils.HashPassword(password)
 	if err != nil {
 		return err
 	}
@@ -66,8 +74,28 @@ func seedAdminUser(db *gorm.DB) error {
 		return err
 	}
 
-	log.Println("admin user seeded")
+	log.Printf("admin user seeded — email: %s", email)
+	fmt.Printf("\n========================================\n")
+	fmt.Printf("ADMIN CREDENTIALS (save these now!)\n")
+	fmt.Printf("Email:    %s\n", email)
+	fmt.Printf("Password: %s\n", password)
+	fmt.Printf("========================================\n\n")
 	return nil
+}
+
+func generateRandomPassword(length int) (string, error) {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*"
+	password := make([]byte, length)
+
+	for i := range password {
+		n, err := rand.Int(rand.Reader, big.NewInt(int64(len(charset))))
+		if err != nil {
+			return "", err
+		}
+		password[i] = charset[n.Int64()]
+	}
+
+	return string(password), nil
 }
 
 func seedProfile(db *gorm.DB) error {

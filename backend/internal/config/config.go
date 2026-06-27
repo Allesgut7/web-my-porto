@@ -68,7 +68,13 @@ func Load() *Config {
 		log.Println("[WARN] DATABASE_URL is empty")
 	}
 
-	if cfg.JWTSecret == "change_me" {
+	if cfg.JWTSecret == "change_me" || cfg.JWTSecret == "" {
+		if cfg.IsProduction() {
+			log.Fatalf("[FATAL] JWT_SECRET must be set to a secure value in production")
+		}
+		if cfg.AppEnv != "development" {
+			log.Fatalf("[FATAL] JWT_SECRET must be set to a secure value (APP_ENV=%s)", cfg.AppEnv)
+		}
 		log.Println("[WARN] JWT_SECRET is still using default value")
 	}
 

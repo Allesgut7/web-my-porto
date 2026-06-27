@@ -1,11 +1,12 @@
 # Env
 .env
-.env.*
-!.env.example
 backend/.env
-backend/.env.*
 frontend/.env
-frontend/.env.*
+
+# Allow example files
+!.env.example
+!backend/.env.example
+!frontend/.env.example
 
 # Go
 backend/bin/
@@ -39,3 +40,7 @@ docker-compose.override.yml
 *.sql
 *.dump
 *.backup
+
+# Cookies / sensitive temp files
+cookies.txt
+**/cookies.txt

@@ -138,6 +138,7 @@ function retry() {
     >
       <div class="overflow-x-auto">
         <table class="w-full min-w-[900px] text-left text-sm">
+          <caption class="sr-only">Admin projects list</caption>
           <thead class="bg-slate-50">
             <tr class="border-b border-app-border text-xs uppercase tracking-[0.14em] text-app-muted">
               <th class="px-6 py-4">Project</th>

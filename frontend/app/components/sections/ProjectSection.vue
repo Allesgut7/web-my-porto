@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ProjectListItem } from '~/types/project'
+import { safeUrl } from '~/utils/url'
 
 defineProps<{
   projects: ProjectListItem[]
@@ -143,7 +144,7 @@ defineProps<{
                   <div class="flex gap-3">
                     <a
                       v-if="projects[0].demoUrl"
-                      :href="projects[0].demoUrl"
+                      :href="safeUrl(projects[0].demoUrl) || undefined"
                       target="_blank"
                       rel="noopener noreferrer"
                       class="btn-ghost"
@@ -153,7 +154,7 @@ defineProps<{
                     </a>
                     <a
                       v-if="projects[0].repositoryUrl"
-                      :href="projects[0].repositoryUrl"
+                      :href="safeUrl(projects[0].repositoryUrl) || undefined"
                       target="_blank"
                       rel="noopener noreferrer"
                       class="btn-ghost"

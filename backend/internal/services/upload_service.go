@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"path/filepath"
@@ -87,12 +88,12 @@ func (s *uploadService) DeleteFile(ctx context.Context, id string) error {
 		})
 	}
 
-	if err := s.storageClient.Delete(ctx, file.FileKey); err != nil {
+	if err := s.fileRepo.DeleteByID(fileID); err != nil {
 		return err
 	}
 
-	if err := s.fileRepo.DeleteByID(fileID); err != nil {
-		return err
+	if err := s.storageClient.Delete(ctx, file.FileKey); err != nil {
+		log.Printf("[WARN] failed to delete storage object %s after DB record removed: %v", file.FileKey, err)
 	}
 
 	return nil

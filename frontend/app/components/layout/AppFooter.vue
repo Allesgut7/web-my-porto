@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { safeUrl } from '~/utils/url'
+
 const year = new Date().getFullYear()
 
 const { data: profile } = useProfile({
@@ -43,7 +45,7 @@ const { data: profile } = useProfile({
         <div class="flex flex-wrap gap-3 md:justify-end">
           <a
             v-if="profile?.githubUrl"
-            :href="profile.githubUrl"
+            :href="safeUrl(profile.githubUrl) || undefined"
             target="_blank"
             rel="noopener noreferrer"
             class="rounded-full border border-white/10 px-5 py-2.5 text-sm text-slate-300 transition-all duration-300 hover:border-white/20 hover:bg-white/10 hover:text-white hover:-translate-y-0.5"
@@ -53,7 +55,7 @@ const { data: profile } = useProfile({
 
           <a
             v-if="profile?.linkedinUrl"
-            :href="profile.linkedinUrl"
+            :href="safeUrl(profile.linkedinUrl) || undefined"
             target="_blank"
             rel="noopener noreferrer"
             class="rounded-full border border-white/10 px-5 py-2.5 text-sm text-slate-300 transition-all duration-300 hover:border-white/20 hover:bg-white/10 hover:text-white hover:-translate-y-0.5"

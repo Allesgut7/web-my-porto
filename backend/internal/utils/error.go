@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -67,6 +68,7 @@ func NewValidationError(errors map[string]string) *AppError {
 func HandleAppError(ctx *gin.Context, err error) {
 	appErr, ok := err.(*AppError)
 	if !ok {
+		log.Printf("[ERROR] unhandled error: %v", err)
 		InternalServerErrorResponse(ctx)
 		return
 	}

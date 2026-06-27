@@ -12,6 +12,8 @@ const shouldShow = computed(() => {
 <template>
   <div
     v-if="shouldShow"
+    role="status"
+    aria-live="polite"
     class="rounded-2xl border border-green-100 bg-green-50 p-4"
   >
     <p

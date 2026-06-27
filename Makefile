@@ -1,6 +1,6 @@
 
 MIGRATIONS_PATH=backend/migrations
-DATABASE_URL=postgres://postgres:postgres@localhost:5433/web-my-porto?sslmode=disable
+DATABASE_URL ?= postgres://postgres:postgres@localhost:5433/web-my-porto?sslmode=disable
 
 .PHONY: backend-dev frontend-dev docker-up docker-down docker-logs docker-build db-shell health migrate-up migrate-down migrate-down-one migrate-version migrate-force seed
 

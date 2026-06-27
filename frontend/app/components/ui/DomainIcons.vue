@@ -3,7 +3,7 @@ type Domain = 'electrical' | 'iot' | 'data' | 'backend' | 'ml' | 'qa'
 
 defineProps<{
   domain: Domain
-  class?: string
+  iconClass?: string
 }>()
 </script>
 
@@ -11,7 +11,7 @@ defineProps<{
   <!-- Electrical Engineering -->
   <svg
     v-if="domain === 'electrical'"
-    :class="class"
+    :class="iconClass"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -25,7 +25,7 @@ defineProps<{
   <!-- IoT -->
   <svg
     v-else-if="domain === 'iot'"
-    :class="class"
+    :class="iconClass"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -42,7 +42,7 @@ defineProps<{
   <!-- Data Science / Data Analysis -->
   <svg
     v-else-if="domain === 'data'"
-    :class="class"
+    :class="iconClass"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -58,7 +58,7 @@ defineProps<{
   <!-- Backend -->
   <svg
     v-else-if="domain === 'backend'"
-    :class="class"
+    :class="iconClass"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -77,7 +77,7 @@ defineProps<{
   <!-- Machine Learning -->
   <svg
     v-else-if="domain === 'ml'"
-    :class="class"
+    :class="iconClass"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -99,7 +99,7 @@ defineProps<{
   <!-- QA Testing -->
   <svg
     v-else-if="domain === 'qa'"
-    :class="class"
+    :class="iconClass"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"

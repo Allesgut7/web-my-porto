@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ProjectListItem } from '~/types/project'
+import { safeUrl } from '~/utils/url'
 
 defineProps<{
   project: ProjectListItem
@@ -134,7 +135,7 @@ function formatYear(date?: string | null) {
         <div class="flex gap-3">
           <a
             v-if="project.demoUrl"
-            :href="project.demoUrl"
+            :href="safeUrl(project.demoUrl) || undefined"
             target="_blank"
             rel="noopener noreferrer"
             class="text-sm font-medium text-app-muted hover:text-brand-primary transition-colors"
@@ -145,7 +146,7 @@ function formatYear(date?: string | null) {
 
           <a
             v-if="project.repositoryUrl"
-            :href="project.repositoryUrl"
+            :href="safeUrl(project.repositoryUrl) || undefined"
             target="_blank"
             rel="noopener noreferrer"
             class="text-sm font-medium text-app-muted hover:text-brand-primary transition-colors"

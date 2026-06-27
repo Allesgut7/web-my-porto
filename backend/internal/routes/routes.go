@@ -25,9 +25,15 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *gin.Engine {
 
 	router := gin.New()
 
+	router.MaxMultipartMemory = 10 << 20 // 10 MB
+
 	router.Use(gin.Recovery())
 	router.Use(middleware.RequestLogger())
 	router.Use(middleware.CORS(cfg))
+	router.Use(middleware.SecurityHeaders())
+
+	globalRateLimiter := middleware.NewInMemoryRateLimiterWithCap(200, time.Minute, 20000)
+	router.Use(globalRateLimiter.Middleware())
 
 	userRepository := repositories.NewUserRepository(db)
 	authService := services.NewAuthService(cfg, userRepository)
@@ -53,7 +59,7 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *gin.Engine {
 		uploadHandler = handlers.NewUploadHandler(uploadService)
 	}
 
-	loginRateLimiter := middleware.NewInMemoryRateLimiter(5, 10*time.Minute)
+	loginRateLimiter := middleware.NewInMemoryRateLimiter(5, 10*time.Minute).WithMessage("Too many login attempts, please try again later")
 
 	api := router.Group("/api")
 	{
@@ -72,6 +78,7 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *gin.Engine {
 
 		admin := api.Group("/admin")
 		admin.Use(middleware.AuthMiddleware(cfg))
+		admin.Use(middleware.RequireRole("owner"))
 		{
 			admin.GET("/ping", func(ctx *gin.Context) {
 				utils.SuccessResponse(ctx, http.StatusOK, "Admin route authenticated", gin.H{
@@ -83,13 +90,13 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *gin.Engine {
 
 			admin.GET("/projects", projectHandler.GetAdminProjects)
 			admin.GET("/projects/:id", projectHandler.GetAdminProjectByID)
-			admin.POST("/projects", projectHandler.CreateAdminProject)
-			admin.PUT("/projects/:id", projectHandler.UpdateAdminProject)
+			admin.POST("/projects", middleware.BodySizeLimit(1<<20), projectHandler.CreateAdminProject)
+			admin.PUT("/projects/:id", middleware.BodySizeLimit(1<<20), projectHandler.UpdateAdminProject)
 			admin.DELETE("/projects/:id", projectHandler.DeleteAdminProject)
 
 			if uploadHandler != nil {
-				admin.POST("/uploads/images", uploadHandler.UploadImage)
-				admin.POST("/uploads/files", uploadHandler.UploadFile)
+				admin.POST("/uploads/images", middleware.BodySizeLimit(10<<20), uploadHandler.UploadImage)
+				admin.POST("/uploads/files", middleware.BodySizeLimit(15<<20), uploadHandler.UploadFile)
 				admin.DELETE("/uploads/:id", uploadHandler.DeleteFile)
 			} else {
 				admin.POST("/uploads/images", storageNotConfiguredHandler)
@@ -117,7 +124,6 @@ func HealthCheckHandler(cfg *config.Config, db *gorm.DB) gin.HandlerFunc {
 
 		utils.SuccessResponse(ctx, http.StatusOK, "Backend service is healthy", gin.H{
 			"service":  "web-my-porto-api",
-			"env":      cfg.AppEnv,
 			"database": "connected",
 		})
 	}

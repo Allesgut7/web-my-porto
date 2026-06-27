@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { safeUrl } from '~/utils/url'
+
 const route = useRoute()
 const slug = computed(() => String(route.params.slug || ''))
 
@@ -123,7 +125,7 @@ function formatDate(date?: string | null) {
           <div class="mt-8 flex flex-wrap gap-3">
             <a
               v-if="project.demoUrl"
-              :href="project.demoUrl"
+              :href="safeUrl(project.demoUrl) || undefined"
               target="_blank"
               rel="noopener noreferrer"
               class="btn-primary"
@@ -133,7 +135,7 @@ function formatDate(date?: string | null) {
 
             <a
               v-if="project.repositoryUrl"
-              :href="project.repositoryUrl"
+              :href="safeUrl(project.repositoryUrl) || undefined"
               target="_blank"
               rel="noopener noreferrer"
               class="btn-secondary"
@@ -143,7 +145,7 @@ function formatDate(date?: string | null) {
 
             <a
               v-if="project.documentationUrl"
-              :href="project.documentationUrl"
+              :href="safeUrl(project.documentationUrl) || undefined"
               target="_blank"
               rel="noopener noreferrer"
               class="btn-ghost"
@@ -337,7 +339,7 @@ function formatDate(date?: string | null) {
             <div class="mt-5 space-y-3">
               <a
                 v-if="project.demoUrl"
-                :href="project.demoUrl"
+                :href="safeUrl(project.demoUrl) || undefined"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="btn-primary w-full"
@@ -347,7 +349,7 @@ function formatDate(date?: string | null) {
 
               <a
                 v-if="project.repositoryUrl"
-                :href="project.repositoryUrl"
+                :href="safeUrl(project.repositoryUrl) || undefined"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="btn-secondary w-full"
@@ -357,7 +359,7 @@ function formatDate(date?: string | null) {
 
               <a
                 v-if="project.documentationUrl"
-                :href="project.documentationUrl"
+                :href="safeUrl(project.documentationUrl) || undefined"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="btn-ghost w-full"

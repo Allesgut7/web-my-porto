@@ -32,6 +32,12 @@ async function handleFileChange(event: Event) {
     return
   }
 
+  const MAX_SIZE = 5 * 1024 * 1024
+  if (file.size > MAX_SIZE) {
+    errorMessage.value = 'Ukuran file maksimal 5 MB.'
+    return
+  }
+
   isUploading.value = true
 
   try {

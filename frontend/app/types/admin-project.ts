@@ -31,24 +31,6 @@ export interface ProjectFormState {
   techStackIds: string[]
 }
 
-// export interface ProjectPayload {
-//   title: string
-//   slug: string
-//   short_description?: string | null
-//   description?: string | null
-//   project_type?: string | null
-//   status: ProjectStatus
-//   demo_url?: string | null
-//   repository_url?: string | null
-//   documentation_url?: string | null
-//   thumbnail_file_id?: string | null
-//   is_featured: boolean
-//   display_order: number
-//   started_at?: string | null
-//   completed_at?: string | null
-//   tech_stack_ids?: string[]
-// }
-
 export interface ProjectPayload {
   title: string
   slug: string
@@ -65,19 +47,6 @@ export interface ProjectPayload {
   startedAt?: string | null
   completedAt?: string | null
   techStackIds?: string[]
-
-  // fallback jika backend kamu masih membaca snake_case
-  short_description?: string | null
-  project_type?: string | null
-  demo_url?: string | null
-  repository_url?: string | null
-  documentation_url?: string | null
-  thumbnail_file_id?: string | null
-  is_featured?: boolean
-  display_order?: number
-  started_at?: string | null
-  completed_at?: string | null
-  tech_stack_ids?: string[]
 }
 
 export interface AdminProjectQuery {
@@ -114,27 +83,6 @@ export function emptyProjectForm(): ProjectFormState {
   }
 }
 
-// export function toProjectPayload(form: ProjectFormState): ProjectPayload {
-//   return {
-//     title: form.title,
-//     slug: form.slug,
-//     short_description: form.shortDescription || null,
-//     description: form.description || null,
-//     project_type: form.projectType || null,
-//     status: form.status,
-//     demo_url: form.demoUrl || null,
-//     repository_url: form.repositoryUrl || null,
-//     documentation_url: form.documentationUrl || null,
-//     thumbnail_file_id: form.thumbnailFileId || null,
-//     is_featured: form.isFeatured,
-//     display_order: Number(form.displayOrder || 0),
-//     started_at: form.startedAt || null,
-//     completed_at: form.completedAt || null,
-//     tech_stack_ids: form.techStackIds,
-//   }
-// }
-
-
 export function toProjectPayload(form: ProjectFormState): ProjectPayload {
   const shortDescription = form.shortDescription.trim() || null
   const description = form.description.trim() || null
@@ -163,18 +111,6 @@ export function toProjectPayload(form: ProjectFormState): ProjectPayload {
     startedAt,
     completedAt,
     techStackIds: form.techStackIds,
-
-    short_description: shortDescription,
-    project_type: projectType,
-    demo_url: demoUrl,
-    repository_url: repositoryUrl,
-    documentation_url: documentationUrl,
-    thumbnail_file_id: thumbnailFileId,
-    is_featured: form.isFeatured,
-    display_order: displayOrder,
-    started_at: startedAt,
-    completed_at: completedAt,
-    tech_stack_ids: form.techStackIds,
   }
 }
 

@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { safeUrl } from '~/utils/url'
+
 const isOpen = ref(false)
 const isScrolled = ref(false)
 const scrollProgress = ref(0)
+const drawerRef = ref<HTMLElement | null>(null)
 
 const { data: profile } = useProfile({
   lazy: true,
@@ -51,6 +54,25 @@ function handleScroll() {
 function handleKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape' && isOpen.value) {
     closeMenu()
+    return
+  }
+
+  if (e.key === 'Tab' && isOpen.value && drawerRef.value) {
+    const focusable = drawerRef.value.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    )
+    if (focusable.length === 0) return
+
+    const first = focusable[0]
+    const last = focusable[focusable.length - 1]
+
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault()
+      last.focus()
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault()
+      first.focus()
+    }
   }
 }
 
@@ -153,7 +175,7 @@ onUnmounted(() => {
       <div class="hidden items-center justify-end gap-3 md:flex">
         <a
           v-if="profile?.githubUrl"
-          :href="profile.githubUrl"
+          :href="safeUrl(profile.githubUrl) || undefined"
           target="_blank"
           rel="noopener noreferrer"
           class="flex items-center gap-2 rounded-full px-4 py-3 text-[15px] font-medium text-app-muted transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:bg-slate-100 hover:text-app-text hover:scale-105 hover:-translate-y-0.5 active:scale-95"
@@ -166,7 +188,7 @@ onUnmounted(() => {
 
         <a
           v-if="profile?.cvUrl"
-          :href="profile.cvUrl"
+          :href="safeUrl(profile.cvUrl) || undefined"
           target="_blank"
           rel="noopener noreferrer"
           class="relative group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3.5 text-[15px] font-semibold text-white shadow-glow-blue transition-all duration-400 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:shadow-glow-blue-lg hover:-translate-y-1 hover:scale-105 active:scale-95"
@@ -216,6 +238,7 @@ onUnmounted(() => {
     <Transition name="navbar-fade">
       <div
         v-if="isOpen"
+        role="presentation"
         class="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm md:hidden"
         @click="closeMenu"
       />
@@ -225,6 +248,10 @@ onUnmounted(() => {
     <Transition name="navbar-slide-right">
       <div
         v-if="isOpen"
+        ref="drawerRef"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation menu"
         class="fixed inset-y-0 right-0 z-[70] flex w-80 flex-col bg-gradient-to-b from-white to-slate-50 shadow-deep md:hidden rounded-l-3xl"
       >
         <!-- Drawer Header -->
@@ -308,7 +335,7 @@ onUnmounted(() => {
           <!-- GitHub Link -->
           <a
             v-if="profile?.githubUrl"
-            :href="profile.githubUrl"
+            :href="safeUrl(profile.githubUrl) || undefined"
             target="_blank"
             rel="noopener noreferrer"
             class="flex items-center gap-3.5 rounded-2xl px-4 py-4 text-[15px] font-medium text-app-muted transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:bg-slate-100 hover:text-app-text hover:translate-x-1 active:scale-[0.98] navbar-stagger-item"
@@ -331,7 +358,7 @@ onUnmounted(() => {
         <div class="border-t border-app-border px-4 py-5">
           <a
             v-if="profile?.cvUrl"
-            :href="profile.cvUrl"
+            :href="safeUrl(profile.cvUrl) || undefined"
             target="_blank"
             rel="noopener noreferrer"
             class="relative flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 text-[15px] font-semibold text-white shadow-glow-blue transition-all duration-400 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:shadow-glow-blue-lg hover:-translate-y-1 hover:scale-105 active:scale-95 navbar-stagger-item"

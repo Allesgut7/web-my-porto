@@ -63,13 +63,6 @@ async function handleSubmit() {
       </p>
     </div>
 
-    <!-- <SuccessState
-      v-if="successMessage"
-      class="mb-6"
-      title="Create berhasil"
-      :message="successMessage"
-    /> -->
-
     <ProjectForm
       v-model="form"
       submit-label="Create Project"

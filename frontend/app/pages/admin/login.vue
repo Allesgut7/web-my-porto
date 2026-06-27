@@ -27,9 +27,8 @@ async function handleLogin() {
   try {
     await login(form)
 
-    const redirect = typeof route.query.redirect === 'string'
-      ? route.query.redirect
-      : '/admin/dashboard'
+    const raw = typeof route.query.redirect === 'string' ? route.query.redirect : ''
+    const redirect = raw.startsWith('/') && !raw.startsWith('//') && !raw.includes('://') ? raw : '/admin/dashboard'
 
     await navigateTo(redirect)
   } catch (error: any) {
@@ -74,8 +73,9 @@ async function handleLogin() {
           @submit.prevent="handleLogin"
         >
           <div>
-            <label class="text-sm font-semibold text-app-text">Email</label>
+            <label for="login-email" class="text-sm font-semibold text-app-text">Email</label>
             <input
+              id="login-email"
               v-model="form.email"
               type="email"
               class="input mt-2"
@@ -86,8 +86,9 @@ async function handleLogin() {
           </div>
 
           <div>
-            <label class="text-sm font-semibold text-app-text">Password</label>
+            <label for="login-password" class="text-sm font-semibold text-app-text">Password</label>
             <input
+              id="login-password"
               v-model="form.password"
               type="password"
               class="input mt-2"

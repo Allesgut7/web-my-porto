@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Profile } from '~/types/profile'
+import { safeUrl } from '~/utils/url'
 
 defineProps<{
   profile: Profile
@@ -62,7 +63,7 @@ defineProps<{
 
               <a
                 v-if="profile.cvUrl"
-                :href="profile.cvUrl"
+                :href="safeUrl(profile.cvUrl) || undefined"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="btn border border-slate-600 px-8 py-4 text-base text-white hover:bg-slate-800 hover:border-slate-500 hover:shadow-deep"
@@ -99,7 +100,7 @@ defineProps<{
 
               <a
                 v-if="profile.githubUrl"
-                :href="profile.githubUrl"
+                :href="safeUrl(profile.githubUrl) || undefined"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-slate-200 transition-all duration-300 hover:border-white/20 hover:bg-white/10 hover:shadow-inner-glow hover:-translate-y-0.5"
@@ -117,7 +118,7 @@ defineProps<{
 
               <a
                 v-if="profile.linkedinUrl"
-                :href="profile.linkedinUrl"
+                :href="safeUrl(profile.linkedinUrl) || undefined"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-slate-200 transition-all duration-300 hover:border-white/20 hover:bg-white/10 hover:shadow-inner-glow hover:-translate-y-0.5"

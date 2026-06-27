@@ -296,7 +296,7 @@ func applyPublicProjectFilters(query *gorm.DB, filter PublicProjectFilter) *gorm
 	}
 
 	if filter.Search != "" {
-		search := "%" + strings.ToLower(filter.Search) + "%"
+		search := "%" + escapeLikePattern(strings.ToLower(filter.Search)) + "%"
 
 		query = query.Where(
 			"(LOWER(title) LIKE ? OR LOWER(COALESCE(short_description, '')) LIKE ?)",
@@ -331,7 +331,7 @@ func applyAdminProjectFilters(query *gorm.DB, filter AdminProjectFilter) *gorm.D
 	}
 
 	if filter.Search != "" {
-		search := "%" + strings.ToLower(filter.Search) + "%"
+		search := "%" + escapeLikePattern(strings.ToLower(filter.Search)) + "%"
 
 		query = query.Where(
 			"LOWER(title) LIKE ?",
@@ -353,4 +353,11 @@ func applyAdminProjectSorting(query *gorm.DB, sort string) *gorm.DB {
 	default:
 		return query.Order("created_at DESC")
 	}
+}
+
+func escapeLikePattern(s string) string {
+	s = strings.ReplaceAll(s, `\`, `\\`)
+	s = strings.ReplaceAll(s, `%`, `\%`)
+	s = strings.ReplaceAll(s, `_`, `\_`)
+	return s
 }

@@ -117,6 +117,7 @@ function retry() {
         class="mt-6 overflow-x-auto"
       >
         <table class="w-full min-w-[720px] text-left text-sm">
+          <caption class="sr-only">Recent projects</caption>
           <thead>
             <tr class="border-b border-app-border text-xs uppercase tracking-[0.14em] text-app-muted">
               <th class="py-3 pr-4">Title</th>
