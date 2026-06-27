@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+node_modules
+.nuxt
+.output
+dist
+.git
+.gitignore
+README.md
+*.md
+.vscode
+.idea

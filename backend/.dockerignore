@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+cookies.txt
+*.test
+coverage.out
+bin/
+tmp/
+.git
+.gitignore
+*.md

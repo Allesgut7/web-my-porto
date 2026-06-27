@@ -12,6 +12,8 @@ services:
       retries: 5
 
   backend:
+    image: ghcr.io/allesgut7/web-my-porto/backend:latest
+    build: !reset null
     env_file:
       - ./backend/.env.production
     ports: []
@@ -20,6 +22,8 @@ services:
         condition: service_healthy
 
   frontend:
+    image: ghcr.io/allesgut7/web-my-porto/frontend:latest
+    build: !reset null
     env_file:
       - ./frontend/.env.production
     ports: []
