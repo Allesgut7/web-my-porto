@@ -14,18 +14,18 @@ const shouldShow = computed(() => {
     v-if="shouldShow"
     role="status"
     aria-live="polite"
-    class="rounded-2xl border border-green-100 bg-green-50 p-4"
+    class="rounded-2xl border border-green-100 dark:border-green-900 bg-green-50 dark:bg-green-950 p-4"
   >
     <p
       v-if="title"
-      class="text-sm font-semibold text-green-700"
+      class="text-sm font-semibold text-green-700 dark:text-green-400"
     >
       {{ title }}
     </p>
 
     <p
       v-if="message"
-      class="mt-1 text-sm leading-6 text-green-700"
+      class="mt-1 text-sm leading-6 text-green-700 dark:text-green-400"
     >
       {{ message }}
     </p>

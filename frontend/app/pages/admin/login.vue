@@ -43,11 +43,11 @@ async function handleLogin() {
 </script>
 
 <template>
-  <div class="technical-grid flex min-h-screen items-center justify-center bg-app-background px-6 py-12">
+  <div class="technical-grid flex min-h-screen items-center justify-center bg-app-background dark:bg-slate-950 px-6 py-12">
     <div class="w-full max-w-md">
       <NuxtLink
         to="/"
-        class="mb-8 inline-block text-sm font-semibold text-brand-primary hover:text-blue-800"
+        class="mb-8 inline-block text-sm font-semibold text-brand-primary hover:text-blue-800 dark:hover:text-blue-400"
       >
         ← Back to public site
       </NuxtLink>

@@ -139,7 +139,7 @@ function retry() {
       <div class="overflow-x-auto">
         <table class="w-full min-w-[900px] text-left text-sm">
           <caption class="sr-only">Admin projects list</caption>
-          <thead class="bg-slate-50">
+          <thead class="bg-slate-50 dark:bg-slate-800">
             <tr class="border-b border-app-border text-xs uppercase tracking-[0.14em] text-app-muted">
               <th class="px-6 py-4">Project</th>
               <th class="px-6 py-4">Type</th>
@@ -157,7 +157,7 @@ function retry() {
             >
               <td class="px-6 py-4">
                 <div class="flex items-center gap-4">
-                  <div class="technical-grid h-14 w-20 overflow-hidden rounded-xl bg-brand-soft">
+                  <div class="technical-grid h-14 w-20 overflow-hidden rounded-xl bg-brand-soft dark:bg-blue-950">
                     <img
                       v-if="project.thumbnailUrl"
                       :src="project.thumbnailUrl"
@@ -200,14 +200,14 @@ function retry() {
                 <div class="flex justify-end gap-3">
                   <NuxtLink
                     :to="`/admin/projects/${project.id}`"
-                    class="font-semibold text-brand-primary hover:text-blue-800"
+                    class="font-semibold text-brand-primary hover:text-blue-800 dark:hover:text-blue-400"
                   >
                     Edit
                   </NuxtLink>
 
                   <button
                     type="button"
-                    class="font-semibold text-red-600 hover:text-red-700"
+                    class="font-semibold text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                     :disabled="deletingId === project.id"
                     @click="handleDelete(project.id, project.title)"
                   >

@@ -75,13 +75,13 @@ function retry() {
       </div>
 
       <div class="app-card p-6">
-        <p class="font-mono text-xs uppercase tracking-[0.2em] text-green-700">Published</p>
+        <p class="font-mono text-xs uppercase tracking-[0.2em] text-green-700 dark:text-green-400">Published</p>
         <p class="mt-4 text-3xl font-bold text-app-text">{{ publishedCount }}</p>
         <p class="mt-2 text-sm text-app-muted">Visible on public site</p>
       </div>
 
       <div class="app-card p-6">
-        <p class="font-mono text-xs uppercase tracking-[0.2em] text-amber-700">Draft</p>
+        <p class="font-mono text-xs uppercase tracking-[0.2em] text-amber-700 dark:text-amber-400">Draft</p>
         <p class="mt-4 text-3xl font-bold text-app-text">{{ draftCount }}</p>
         <p class="mt-2 text-sm text-app-muted">Not public yet</p>
       </div>
@@ -140,7 +140,7 @@ function retry() {
               <td class="py-4 pr-4 text-right">
                 <NuxtLink
                   :to="`/admin/projects/${project.id}`"
-                  class="font-semibold text-brand-primary hover:text-blue-800"
+                  class="font-semibold text-brand-primary hover:text-blue-800 dark:hover:text-blue-400"
                 >
                   Edit
                 </NuxtLink>

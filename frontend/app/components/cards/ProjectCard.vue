@@ -17,7 +17,7 @@ function formatYear(date?: string | null) {
 </script>
 
 <template>
-  <article class="app-card overflow-hidden group transition-all duration-500 hover:-translate-y-2 hover:shadow-deep hover:border-blue-200 gradient-border">
+  <article class="app-card overflow-hidden group transition-all duration-500 hover:-translate-y-2 hover:shadow-deep hover:border-blue-200 dark:hover:border-blue-800 gradient-border">
     <!-- Accent bar -->
     <div
       v-if="project.isFeatured"
@@ -37,7 +37,7 @@ function formatYear(date?: string | null) {
       class="block"
       :aria-label="`Lihat detail project ${project.title}`"
     >
-      <div class="relative aspect-[16/10] overflow-hidden bg-brand-soft">
+      <div class="relative aspect-[16/10] overflow-hidden bg-brand-soft dark:bg-blue-950">
         <img
           v-if="project.thumbnailUrl"
           :src="project.thumbnailUrl"
@@ -84,7 +84,7 @@ function formatYear(date?: string | null) {
         </span>
       </div>
 
-      <h3 class="mt-4 text-xl font-bold tracking-tight text-app-text font-display">
+      <h3 class="mt-4 text-xl font-bold tracking-tight text-app-text dark:text-slate-50 font-display">
         <NuxtLink
           :to="`/projects/${project.slug}`"
           class="transition-colors duration-200 hover:text-brand-primary"
@@ -93,7 +93,7 @@ function formatYear(date?: string | null) {
         </NuxtLink>
       </h3>
 
-      <p class="mt-3 line-clamp-3 text-sm leading-6 text-app-muted">
+      <p class="mt-3 line-clamp-3 text-sm leading-6 text-app-muted dark:text-slate-400">
         {{ project.shortDescription || 'Deskripsi singkat project belum tersedia.' }}
       </p>
 
@@ -115,10 +115,10 @@ function formatYear(date?: string | null) {
         </span>
       </div>
 
-      <div class="mt-6 flex items-center justify-between gap-4 border-t border-app-border pt-5">
+      <div class="mt-6 flex items-center justify-between gap-4 border-t border-app-border dark:border-slate-800 pt-5">
         <NuxtLink
           :to="`/projects/${project.slug}`"
-          class="text-sm font-semibold text-brand-primary hover:text-blue-800 group/link inline-flex items-center gap-1.5 transition-colors"
+          class="text-sm font-semibold text-brand-primary hover:text-blue-800 dark:hover:text-blue-300 group/link inline-flex items-center gap-1.5 transition-colors"
         >
           View case study
           <svg
@@ -138,7 +138,7 @@ function formatYear(date?: string | null) {
             :href="safeUrl(project.demoUrl) || undefined"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-sm font-medium text-app-muted hover:text-brand-primary transition-colors"
+            class="text-sm font-medium text-app-muted dark:text-slate-400 hover:text-brand-primary transition-colors"
             @click.stop
           >
             Demo
@@ -149,7 +149,7 @@ function formatYear(date?: string | null) {
             :href="safeUrl(project.repositoryUrl) || undefined"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-sm font-medium text-app-muted hover:text-brand-primary transition-colors"
+            class="text-sm font-medium text-app-muted dark:text-slate-400 hover:text-brand-primary transition-colors"
             @click.stop
           >
             Repo

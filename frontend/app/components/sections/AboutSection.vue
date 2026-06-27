@@ -4,58 +4,62 @@ import { safeUrl } from '~/utils/url'
 
 defineProps<{
   profile: Profile
+  projectCount?: number
+  techCount?: number
 }>()
+
+const { t } = useI18n()
 
 const capabilities = [
   {
     domain: 'electrical' as const,
-    title: 'Electrical Engineering',
-    description: 'Circuit design, embedded systems, signal processing, and hardware-software integration.',
+    titleKey: 'capEETitle' as const,
+    descKey: 'capEEDesc' as const,
     color: 'blue',
     icon: 'EE',
   },
   {
     domain: 'iot' as const,
-    title: 'IoT Systems',
-    description: 'Sensor networks, device-to-cloud pipelines, MQTT, and real-time data acquisition.',
+    titleKey: 'capIoTTitle' as const,
+    descKey: 'capIoTDesc' as const,
     color: 'cyan',
     icon: 'IoT',
   },
   {
     domain: 'data' as const,
-    title: 'Data Science & Analytics',
-    description: 'Data pipelines, visualization, statistical analysis, and dashboard development.',
+    titleKey: 'capDataTitle' as const,
+    descKey: 'capDataDesc' as const,
     color: 'amber',
-    icon: 'DATA',
+    icon: 'Data',
   },
   {
     domain: 'backend' as const,
-    title: 'Backend Engineering',
-    description: 'REST API, authentication, database design, deployment, and maintainable services.',
+    titleKey: 'capBackendTitle' as const,
+    descKey: 'capBackendDesc' as const,
     color: 'blue',
-    icon: 'API',
+    icon: 'BE',
   },
   {
     domain: 'ml' as const,
-    title: 'Machine Learning',
-    description: 'Model training, TensorFlow, data pipelines, prediction systems, and ML operations.',
+    titleKey: 'capMLTitle' as const,
+    descKey: 'capMLDesc' as const,
     color: 'cyan',
     icon: 'ML',
   },
   {
     domain: 'qa' as const,
-    title: 'QA & Reliability',
-    description: 'Testing strategies, quality assurance, automation, and system reliability.',
+    titleKey: 'capQATitle' as const,
+    descKey: 'capQADesc' as const,
     color: 'amber',
     icon: 'QA',
   },
 ]
 
-function getColorClasses(color: string) {
+function getBadgeClass(color: string) {
   switch (color) {
-    case 'cyan': return 'bg-cyan-50 text-cyan-700 border-cyan-100'
-    case 'amber': return 'bg-amber-50 text-amber-700 border-amber-100'
-    default: return 'bg-brand-soft text-brand-primary border-blue-100'
+    case 'cyan': return 'bg-cyan-50 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-400 border-cyan-100 dark:border-cyan-900'
+    case 'amber': return 'bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400 border-amber-100 dark:border-amber-900'
+    default: return 'bg-brand-soft dark:bg-blue-950 text-brand-primary border-blue-100 dark:border-blue-900'
   }
 }
 
@@ -76,33 +80,29 @@ function getGlowClass(color: string) {
 }
 
 const stats = computed(() => [
-  { label: 'Domains', value: '6+', color: 'text-brand-primary' },
-  { label: 'Technologies', value: '15+', color: 'text-cyan-600' },
-  { label: 'Projects', value: '5+', color: 'text-amber-600' },
+  { label: t('aboutDomains'), value: '6+', color: 'text-brand-primary dark:text-blue-400' },
+  { label: t('aboutTechnologies'), value: '15+', color: 'text-cyan-600 dark:text-cyan-400' },
+  { label: t('aboutProjects'), value: '5+', color: 'text-amber-600 dark:text-amber-400' },
 ])
 </script>
 
 <template>
   <section
     id="about"
-    class="app-section relative overflow-hidden"
-    style="background: linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 30%, rgba(239,246,255,0.3) 60%, #F8FAFC 100%);"
+    class="app-section relative overflow-hidden bg-about-gradient dark:bg-slate-950"
   >
-    <!-- Glow orbs -->
-    <div class="glow-orb animate-float-glow -left-32 top-1/3 h-80 w-80 bg-blue-600/[0.04]" />
-    <div class="glow-orb animate-float-glow -right-20 bottom-1/4 h-64 w-64 bg-cyan-500/[0.03]" style="animation-delay: 6s;" />
+    <div class="glow-orb animate-float-glow -left-32 top-1/3 h-80 w-80 bg-blue-600/[0.08]" />
+    <div class="glow-orb animate-float-glow -right-20 bottom-1/4 h-64 w-64 bg-cyan-500/[0.06]" style="animation-delay: 6s;" />
 
     <div class="app-container relative z-10">
-      <!-- Section Header — Enhanced -->
       <AnimatedContainer>
         <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <SectionHeader
-            eyebrow="01 / Profile"
-            title="Technical Identity"
-            description="Developer yang bekerja lintas domain teknikal — dari circuit design hingga machine learning, dari sensor IoT hingga production API."
+            :eyebrow="t('aboutEyebrow')"
+            :title="t('aboutTitle')"
+            :description="t('aboutDescription')"
           />
 
-          <!-- Quick stats -->
           <div class="flex gap-6 md:gap-8">
             <div
               v-for="stat in stats"
@@ -110,123 +110,119 @@ const stats = computed(() => [
               class="text-center"
             >
               <p :class="['text-2xl font-bold font-display md:text-3xl', stat.color]">{{ stat.value }}</p>
-              <p class="mt-1 font-mono text-xs uppercase tracking-wider text-app-muted">{{ stat.label }}</p>
+              <p class="mt-1 font-mono text-xs uppercase tracking-wider text-app-muted dark:text-slate-400">{{ stat.label }}</p>
             </div>
           </div>
         </div>
       </AnimatedContainer>
 
-      <!-- Bio Card — More prominent -->
+      <!-- Bio Card with Avatar -->
       <AnimatedContainer :delay="100">
-        <div class="app-card mt-12 overflow-hidden shadow-card gradient-border">
-          <div class="relative p-8 md:p-10">
-            <!-- Decorative corner accent -->
-            <div class="absolute right-0 top-0 h-32 w-32 bg-gradient-to-bl from-blue-500/[0.04] to-transparent" />
-            <div class="absolute bottom-0 left-0 h-24 w-24 bg-gradient-to-tr from-cyan-500/[0.03] to-transparent" />
-
-            <p class="relative z-10 text-lg leading-8 text-app-muted md:text-xl">
-              {{ profile.bio || 'Profil developer belum tersedia. Silakan tambahkan data profile melalui seed atau dashboard admin pada fase berikutnya.' }}
-            </p>
-          </div>
-        </div>
-      </AnimatedContainer>
-
-      <!-- Capability Cards — Enhanced with glow -->
-      <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <AnimatedContainer
-          v-for="(cap, index) in capabilities"
-          :key="cap.domain"
-          :delay="(index + 1) * 100"
-        >
-          <article
-            :class="['app-card group h-full overflow-hidden transition-all duration-500', getGlowClass(cap.color)]"
-          >
-            <!-- Accent bar -->
-            <div :class="getAccentBarClass(cap.color)" />
-
-            <div class="p-6 md:p-7">
-              <div class="flex items-start gap-4">
-                <div
-                  :class="['flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border font-mono text-xs font-bold transition-all duration-300 group-hover:scale-110 group-hover:shadow-sm', getColorClasses(cap.color)]"
-                >
-                  {{ cap.icon }}
-                </div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold text-app-text font-display">
-                    {{ cap.title }}
-                  </h3>
-                  <p class="mt-2.5 text-sm leading-6 text-app-muted">
-                    {{ cap.description }}
-                  </p>
+        <div class="mt-10 app-card p-6 md:p-8">
+          <div class="flex flex-col md:flex-row gap-6">
+            <div
+              v-if="profile.avatarUrl"
+              class="shrink-0"
+            >
+              <div class="relative h-24 w-24 md:h-32 md:w-32">
+                <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500" />
+                <div class="absolute inset-[3px] rounded-[13px] overflow-hidden bg-white dark:bg-slate-900">
+                  <img
+                    :src="profile.avatarUrl"
+                    :alt="profile.fullName"
+                    class="h-full w-full object-cover"
+                  >
                 </div>
               </div>
             </div>
-          </article>
-        </AnimatedContainer>
-      </div>
 
-      <!-- Info Cards — Enhanced -->
-      <AnimatedContainer :delay="600">
-        <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div class="group rounded-2xl border border-app-border bg-gradient-to-br from-white to-slate-50/80 p-5 transition-all duration-300 hover:border-blue-200 hover:shadow-card hover:-translate-y-1">
-            <p class="font-mono text-xs uppercase tracking-[0.18em] text-brand-primary">
-              Name
-            </p>
-            <p class="mt-2.5 font-bold text-app-text font-display text-lg">
-              {{ profile.fullName }}
-            </p>
-          </div>
-
-          <div class="group rounded-2xl border border-app-border bg-gradient-to-br from-white to-cyan-50/30 p-5 transition-all duration-300 hover:border-cyan-200 hover:shadow-card hover:-translate-y-1">
-            <p class="font-mono text-xs uppercase tracking-[0.18em] text-accent-tech">
-              Location
-            </p>
-            <p class="mt-2.5 font-bold text-app-text font-display text-lg">
-              {{ profile.location || 'Not specified' }}
-            </p>
-          </div>
-
-          <div class="group rounded-2xl border border-app-border bg-gradient-to-br from-white to-blue-50/30 p-5 transition-all duration-300 hover:border-blue-200 hover:shadow-card hover:-translate-y-1">
-            <p class="font-mono text-xs uppercase tracking-[0.18em] text-brand-primary">
-              Email
-            </p>
-            <a
-              v-if="profile.email"
-              :href="`mailto:${profile.email}`"
-              class="mt-2.5 block font-bold text-app-text hover:text-brand-primary font-display text-lg transition-colors"
-            >
-              {{ profile.email }}
-            </a>
-            <p
-              v-else
-              class="mt-2.5 font-bold text-app-text font-display text-lg"
-            >
-              Not specified
-            </p>
-          </div>
-
-          <div class="group rounded-2xl border border-app-border bg-gradient-to-br from-white to-amber-50/30 p-5 transition-all duration-300 hover:border-amber-200 hover:shadow-card hover:-translate-y-1">
-            <p class="font-mono text-xs uppercase tracking-[0.18em] text-accent-main">
-              Website
-            </p>
-            <a
-              v-if="profile.websiteUrl"
-              :href="safeUrl(profile.websiteUrl) || undefined"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="mt-2.5 block font-bold text-app-text hover:text-brand-primary font-display text-lg transition-colors"
-            >
-              Visit website
-            </a>
-            <p
-              v-else
-              class="mt-2.5 font-bold text-app-text font-display text-lg"
-            >
-              Portfolio website
-            </p>
+            <div class="flex-1">
+              <p class="section-eyebrow">{{ t('aboutBioTitle') }}</p>
+              <h3 class="mt-3 text-2xl font-bold text-app-text dark:text-slate-50 font-display">
+                {{ profile.fullName }}
+              </h3>
+              <p v-if="profile.headline" class="mt-1 text-sm font-medium text-brand-primary">
+                {{ profile.headline }}
+              </p>
+              <p class="mt-4 text-base leading-7 text-app-muted dark:text-slate-400">
+                {{ profile.bio || t('aboutBioDefault') }}
+              </p>
+            </div>
           </div>
         </div>
       </AnimatedContainer>
+
+      <!-- Capability Cards -->
+      <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <AnimatedContainer
+          v-for="(cap, index) in capabilities"
+          :key="cap.domain"
+          :delay="150 + index * 80"
+        >
+          <div
+            :class="[
+              'app-card group relative overflow-hidden p-6 transition-all duration-500 hover:-translate-y-2 hover:shadow-deep',
+              getGlowClass(cap.color),
+            ]"
+          >
+            <div :class="getAccentBarClass(cap.color)" />
+
+            <div class="flex items-start gap-4">
+              <div
+                :class="[
+                  'flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border text-sm font-bold font-display',
+                  getBadgeClass(cap.color),
+                ]"
+              >
+                {{ cap.icon }}
+              </div>
+
+              <div class="min-w-0 flex-1">
+                <h3 class="text-lg font-bold text-app-text dark:text-slate-50 font-display">
+                  {{ t(cap.titleKey) }}
+                </h3>
+                <p class="mt-2 text-sm leading-6 text-app-muted dark:text-slate-400">
+                  {{ t(cap.descKey) }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </AnimatedContainer>
+      </div>
+
+      <!-- Info Cards -->
+      <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <AnimatedContainer
+          v-for="(item, index) in [
+            { label: t('aboutInfoName'), value: profile.fullName, icon: '👤' },
+            { label: t('aboutInfoLocation'), value: profile.location || t('aboutInfoNotSpecified'), icon: '📍' },
+            { label: t('aboutInfoEmail'), value: profile.email, icon: '📧', href: profile.email ? `mailto:${profile.email}` : undefined },
+            { label: t('aboutInfoWebsite'), value: profile.websiteUrl || t('aboutInfoNotSpecified'), icon: '🌐', href: safeUrl(profile.websiteUrl) || undefined },
+          ]"
+          :key="item.label"
+          :delay="300 + index * 80"
+        >
+          <component
+            :is="item.href ? 'a' : 'div'"
+            :href="item.href || undefined"
+            :target="item.href?.startsWith('http') ? '_blank' : undefined"
+            :rel="item.href?.startsWith('http') ? 'noopener noreferrer' : undefined"
+            class="group app-card block p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-card"
+          >
+            <div class="flex items-center gap-3">
+              <span class="text-xl">{{ item.icon }}</span>
+              <div class="min-w-0">
+                <p class="font-mono text-xs uppercase tracking-[0.18em] text-brand-primary">
+                  {{ item.label }}
+                </p>
+                <p class="mt-1.5 font-bold text-app-text dark:text-slate-50 font-display truncate">
+                  {{ item.value }}
+                </p>
+              </div>
+            </div>
+          </component>
+        </AnimatedContainer>
+      </div>
     </div>
   </section>
 </template>

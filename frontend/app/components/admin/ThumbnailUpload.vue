@@ -66,7 +66,7 @@ async function handleFileChange(event: Event) {
 
 <template>
   <div class="space-y-4">
-    <div class="technical-grid aspect-[16/10] overflow-hidden rounded-2xl border border-app-border bg-brand-soft">
+    <div class="technical-grid aspect-[16/10] overflow-hidden rounded-2xl border border-app-border dark:border-slate-800 bg-brand-soft dark:bg-blue-950">
       <img
         v-if="previewUrl"
         :src="previewUrl"
@@ -94,7 +94,7 @@ async function handleFileChange(event: Event) {
       <input
         type="file"
         accept="image/jpeg,image/png,image/webp"
-        class="block w-full cursor-pointer rounded-xl border border-app-border bg-white text-sm text-app-muted file:mr-4 file:border-0 file:bg-brand-primary file:px-5 file:py-3 file:text-sm file:font-semibold file:text-white hover:file:bg-blue-800"
+        class="block w-full cursor-pointer rounded-xl border border-app-border dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-app-muted dark:text-slate-400 file:mr-4 file:border-0 file:bg-brand-primary file:px-5 file:py-3 file:text-sm file:font-semibold file:text-white hover:file:bg-blue-800"
         :disabled="isUploading"
         @change="handleFileChange"
       >
@@ -109,7 +109,7 @@ async function handleFileChange(event: Event) {
 
     <p
       v-if="errorMessage"
-      class="text-sm font-medium text-red-600"
+      class="text-sm font-medium text-red-600 dark:text-red-400"
     >
       {{ errorMessage }}
     </p>

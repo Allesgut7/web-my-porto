@@ -16,12 +16,16 @@ type ApiFetch = {
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig()
 
+  const baseURL = import.meta.server
+    ? config.apiBaseUrl
+    : config.public.apiBaseUrl
+
   const ssrHeaders = import.meta.server
     ? useRequestHeaders(['cookie'])
     : {}
 
   const api = $fetch.create({
-    baseURL: config.public.apiBaseUrl,
+    baseURL,
     credentials: 'include',
     headers: {
       Accept: 'application/json',

@@ -51,7 +51,7 @@ async function handleSubmit() {
     <div class="mb-8">
       <NuxtLink
         to="/admin/projects"
-        class="text-sm font-semibold text-brand-primary hover:text-blue-800"
+        class="text-sm font-semibold text-brand-primary hover:text-blue-800 dark:hover:text-blue-400"
       >
         ← Back to projects
       </NuxtLink>

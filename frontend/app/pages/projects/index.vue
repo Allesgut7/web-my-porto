@@ -52,7 +52,7 @@ function retry() {
 
 <template>
   <div>
-    <section class="relative overflow-hidden border-b border-app-border bg-app-background py-16 md:py-20">
+    <section class="relative overflow-hidden border-b border-app-border dark:border-slate-800 bg-app-background dark:bg-slate-950 py-16 md:py-20">
       <div class="bg-grid-pattern bg-grid-animate absolute inset-0 opacity-40" />
       <CircuitPattern :opacity="0.06" class="absolute inset-0" />
 
@@ -61,15 +61,15 @@ function retry() {
           Projects
         </p>
 
-        <h1 class="mt-4 max-w-3xl text-4xl font-extrabold tracking-tight text-app-text md:text-5xl font-display">
+        <h1 class="mt-4 max-w-3xl text-4xl font-extrabold tracking-tight text-app-text dark:text-slate-50 md:text-5xl font-display">
           Published engineering work and portfolio projects.
         </h1>
 
-        <p class="mt-5 max-w-2xl text-base leading-8 text-app-muted md:text-lg">
+        <p class="mt-5 max-w-2xl text-base leading-8 text-app-muted dark:text-slate-400 md:text-lg">
           Semua project di halaman ini berasal dari Public API dan hanya menampilkan data yang berstatus published.
         </p>
 
-        <div class="mt-6 flex flex-wrap gap-3 text-sm text-app-muted">
+        <div class="mt-6 flex flex-wrap gap-3 text-sm text-app-muted dark:text-slate-400">
           <span class="badge-tech">
             Data from API
           </span>

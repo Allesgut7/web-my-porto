@@ -2,6 +2,7 @@
 import { safeUrl } from '~/utils/url'
 
 const year = new Date().getFullYear()
+const { t } = useI18n()
 
 const { data: profile } = useProfile({
   lazy: true,
@@ -19,25 +20,25 @@ const { data: profile } = useProfile({
       <div class="grid gap-10 md:grid-cols-[1.2fr_0.8fr] md:items-center">
         <div>
           <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">
-            Cyber-Physical Systems Portfolio
+            {{ t('footerTitle') }}
           </p>
 
           <p class="mt-4 max-w-xl text-base leading-7 text-slate-300">
-            Built with Nuxt, Go, PostgreSQL, and Supabase Storage. Designed for the intersection of hardware engineering and software systems.
+            {{ t('footerDescription') }}
           </p>
 
           <div class="mt-6 flex flex-wrap gap-4 text-xs text-slate-400">
             <span class="inline-flex items-center gap-1.5">
               <span class="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              API-driven content
+              {{ t('footerApiDriven') }}
             </span>
             <span class="inline-flex items-center gap-1.5">
               <span class="h-1.5 w-1.5 rounded-full bg-cyan-500" />
-              Database-first
+              {{ t('footerDatabaseFirst') }}
             </span>
             <span class="inline-flex items-center gap-1.5">
               <span class="h-1.5 w-1.5 rounded-full bg-amber-500" />
-              Open to collaboration
+              {{ t('footerCollaboration') }}
             </span>
           </div>
         </div>
@@ -75,7 +76,7 @@ const { data: profile } = useProfile({
 
       <div class="mt-10 border-t border-white/10 pt-8 text-sm text-slate-400">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p>&copy; {{ year }} {{ profile?.fullName || 'Developer' }}. All rights reserved.</p>
+          <p>&copy; {{ year }} {{ profile?.fullName || 'Developer' }}. {{ t('footerRights') }}</p>
 
           <p class="font-mono text-xs text-slate-500">
             EE &middot; IoT &middot; Data Science &middot; Backend &middot; ML

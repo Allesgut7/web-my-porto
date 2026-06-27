@@ -210,7 +210,7 @@ function handleSubmit() {
               >
             </div>
 
-            <label class="flex items-center gap-3 rounded-xl border border-app-border bg-app-background p-4">
+            <label class="flex items-center gap-3 rounded-xl border border-app-border dark:border-slate-700 bg-app-background dark:bg-slate-800 p-4">
               <input
                 :checked="form.isFeatured"
                 type="checkbox"

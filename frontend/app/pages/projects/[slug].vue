@@ -44,14 +44,14 @@ function formatDate(date?: string | null) {
 <template>
   <div>
     <!-- Hero Section -->
-    <section class="relative overflow-hidden border-b border-app-border bg-app-background py-16 md:py-20">
+    <section class="relative overflow-hidden border-b border-app-border dark:border-slate-800 bg-app-background dark:bg-slate-950 py-16 md:py-20">
       <div class="bg-grid-pattern bg-grid-animate absolute inset-0 opacity-40" />
       <CircuitPattern :opacity="0.06" class="absolute inset-0" />
 
       <div class="app-container-wide relative z-10">
         <NuxtLink
           to="/projects"
-          class="group inline-flex items-center gap-1.5 text-sm font-semibold text-brand-primary hover:text-blue-800 transition-colors"
+          class="group inline-flex items-center gap-1.5 text-sm font-semibold text-brand-primary hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
         >
           <svg
             class="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5"
@@ -102,11 +102,11 @@ function formatDate(date?: string | null) {
             </span>
           </div>
 
-          <h1 class="mt-5 max-w-4xl text-4xl font-extrabold tracking-tight text-app-text md:text-5xl font-display">
+          <h1 class="mt-5 max-w-4xl text-4xl font-extrabold tracking-tight text-app-text dark:text-slate-50 md:text-5xl font-display">
             {{ project.title }}
           </h1>
 
-          <p class="mt-5 max-w-3xl text-base leading-8 text-app-muted md:text-lg">
+          <p class="mt-5 max-w-3xl text-base leading-8 text-app-muted dark:text-slate-400 md:text-lg">
             {{ project.shortDescription || project.description || 'Detail project belum memiliki deskripsi.' }}
           </p>
 
@@ -165,7 +165,7 @@ function formatDate(date?: string | null) {
       <div class="app-container-wide grid gap-8 lg:grid-cols-[1fr_360px]">
         <article class="space-y-8">
           <!-- Hero Image -->
-          <div class="aspect-[16/9] overflow-hidden rounded-panel border border-app-border bg-brand-soft shadow-soft">
+          <div class="aspect-[16/9] overflow-hidden rounded-panel border border-app-border dark:border-slate-800 bg-brand-soft dark:bg-blue-950 shadow-soft dark:shadow-none">
             <img
               v-if="project.thumbnailUrl"
               :src="project.thumbnailUrl"
@@ -188,7 +188,7 @@ function formatDate(date?: string | null) {
             </p>
 
             <div class="prose prose-slate mt-5 max-w-none">
-              <p class="text-base leading-8 text-app-muted">
+              <p class="text-base leading-8 text-app-muted dark:text-slate-400">
                 {{ project.description || project.shortDescription || 'Deskripsi lengkap project belum tersedia.' }}
               </p>
             </div>
@@ -206,7 +206,7 @@ function formatDate(date?: string | null) {
               <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-brand-primary">
                 Problem
               </p>
-              <p class="mt-4 text-sm leading-6 text-app-muted">
+              <p class="mt-4 text-sm leading-6 text-app-muted dark:text-slate-400">
                 {{ project.problem }}
               </p>
             </div>
@@ -218,7 +218,7 @@ function formatDate(date?: string | null) {
               <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-accent-tech">
                 Solution
               </p>
-              <p class="mt-4 text-sm leading-6 text-app-muted">
+              <p class="mt-4 text-sm leading-6 text-app-muted dark:text-slate-400">
                 {{ project.solution }}
               </p>
             </div>
@@ -230,7 +230,7 @@ function formatDate(date?: string | null) {
               <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-accent-main">
                 Impact
               </p>
-              <p class="mt-4 text-sm leading-6 text-app-muted">
+              <p class="mt-4 text-sm leading-6 text-app-muted dark:text-slate-400">
                 {{ project.impact }}
               </p>
             </div>
@@ -249,7 +249,7 @@ function formatDate(date?: string | null) {
               <figure
                 v-for="image in project.images"
                 :key="image.id"
-                class="group overflow-hidden rounded-2xl border border-app-border bg-app-background transition-all duration-300 hover:shadow-card"
+                class="group overflow-hidden rounded-2xl border border-app-border dark:border-slate-800 bg-app-background dark:bg-slate-900 transition-all duration-300 hover:shadow-card"
               >
                 <img
                   :src="image.imageUrl"
@@ -260,7 +260,7 @@ function formatDate(date?: string | null) {
 
                 <figcaption
                   v-if="image.caption"
-                  class="p-4 text-sm text-app-muted"
+                  class="p-4 text-sm text-app-muted dark:text-slate-400"
                 >
                   {{ image.caption }}
                 </figcaption>
@@ -282,32 +282,32 @@ function formatDate(date?: string | null) {
                 v-if="project.projectType"
                 class="flex justify-between gap-4"
               >
-                <dt class="text-app-muted">Category</dt>
-                <dd class="font-semibold text-app-text">{{ project.projectType }}</dd>
+                <dt class="text-app-muted dark:text-slate-400">Category</dt>
+                <dd class="font-semibold text-app-text dark:text-slate-50">{{ project.projectType }}</dd>
               </div>
 
               <div
                 v-if="project.role"
                 class="flex justify-between gap-4"
               >
-                <dt class="text-app-muted">Role</dt>
-                <dd class="font-semibold text-app-text">{{ project.role }}</dd>
+                <dt class="text-app-muted dark:text-slate-400">Role</dt>
+                <dd class="font-semibold text-app-text dark:text-slate-50">{{ project.role }}</dd>
               </div>
 
               <div
                 v-if="formatDate(project.startedAt)"
                 class="flex justify-between gap-4"
               >
-                <dt class="text-app-muted">Started</dt>
-                <dd class="font-semibold text-app-text">{{ formatDate(project.startedAt) }}</dd>
+                <dt class="text-app-muted dark:text-slate-400">Started</dt>
+                <dd class="font-semibold text-app-text dark:text-slate-50">{{ formatDate(project.startedAt) }}</dd>
               </div>
 
               <div
                 v-if="formatDate(project.completedAt)"
                 class="flex justify-between gap-4"
               >
-                <dt class="text-app-muted">Completed</dt>
-                <dd class="font-semibold text-app-text">{{ formatDate(project.completedAt) }}</dd>
+                <dt class="text-app-muted dark:text-slate-400">Completed</dt>
+                <dd class="font-semibold text-app-text dark:text-slate-50">{{ formatDate(project.completedAt) }}</dd>
               </div>
             </dl>
           </div>
@@ -369,7 +369,7 @@ function formatDate(date?: string | null) {
 
               <p
                 v-if="!project.demoUrl && !project.repositoryUrl && !project.documentationUrl"
-                class="text-sm leading-6 text-app-muted"
+                class="text-sm leading-6 text-app-muted dark:text-slate-400"
               >
                 Link external belum tersedia.
               </p>
@@ -384,7 +384,7 @@ function formatDate(date?: string | null) {
             <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-brand-primary">
               &larr; All Projects
             </p>
-            <p class="mt-2 text-sm font-medium text-app-muted group-hover:text-app-text transition-colors">
+            <p class="mt-2 text-sm font-medium text-app-muted dark:text-slate-400 group-hover:text-app-text dark:group-hover:text-slate-50 transition-colors">
               View more engineering work
             </p>
           </NuxtLink>

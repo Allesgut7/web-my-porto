@@ -16,11 +16,11 @@ const { currentValue, elementRef } = useAnimatedCounter(() => props.value, {
 const colorClasses = computed(() => {
   switch (props.color) {
     case 'cyan':
-      return 'from-cyan-100/80 to-cyan-50/50 border-cyan-200/60 text-cyan-700'
+      return 'from-cyan-100/80 dark:from-cyan-900/80 to-cyan-50/50 dark:to-cyan-950/50 border-cyan-200/60 dark:border-cyan-800/60 text-cyan-700 dark:text-cyan-400'
     case 'amber':
-      return 'from-amber-100/80 to-amber-50/50 border-amber-200/60 text-amber-700'
+      return 'from-amber-100/80 dark:from-amber-900/80 to-amber-50/50 dark:to-amber-950/50 border-amber-200/60 dark:border-amber-800/60 text-amber-700 dark:text-amber-400'
     default:
-      return 'from-blue-100/80 to-blue-50/50 border-blue-200/60 text-brand-primary'
+      return 'from-blue-100/80 dark:from-blue-900/80 to-blue-50/50 dark:to-blue-950/50 border-blue-200/60 dark:border-blue-800/60 text-brand-primary dark:text-blue-400'
   }
 })
 

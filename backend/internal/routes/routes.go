@@ -47,6 +47,26 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *gin.Engine {
 	projectService := services.NewProjectService(projectRepository)
 	projectHandler := handlers.NewProjectHandler(projectService)
 
+	experienceRepository := repositories.NewExperienceRepository(db)
+	experienceService := services.NewExperienceService(experienceRepository)
+	experienceHandler := handlers.NewExperienceHandler(experienceService)
+
+	achievementRepository := repositories.NewAchievementRepository(db)
+	achievementService := services.NewAchievementService(achievementRepository)
+	achievementHandler := handlers.NewAchievementHandler(achievementService)
+
+	skillRepository := repositories.NewSkillRepository(db)
+	skillService := services.NewSkillService(skillRepository)
+	skillHandler := handlers.NewSkillHandler(skillService)
+
+	contactRepository := repositories.NewContactMessageRepository(db)
+	contactService := services.NewContactService(contactRepository)
+	contactHandler := handlers.NewContactHandler(contactService)
+
+	techStackRepository := repositories.NewTechStackRepository(db)
+	techStackService := services.NewTechStackService(techStackRepository)
+	techStackHandler := handlers.NewTechStackHandler(techStackService)
+
 	fileRepository := repositories.NewFileRepository(db)
 
 	var uploadHandler *handlers.UploadHandler
@@ -75,6 +95,10 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *gin.Engine {
 		api.GET("/profile", profileHandler.GetPublicProfile)
 		api.GET("/projects", projectHandler.GetPublishedProjects)
 		api.GET("/projects/:slug", projectHandler.GetPublishedProjectBySlug)
+		api.GET("/experiences", experienceHandler.GetPublicExperiences)
+		api.GET("/achievements", achievementHandler.GetPublicAchievements)
+		api.GET("/skills", skillHandler.GetPublicSkills)
+		api.POST("/contact", contactHandler.SubmitMessage)
 
 		admin := api.Group("/admin")
 		admin.Use(middleware.AuthMiddleware(cfg))
@@ -88,11 +112,44 @@ func SetupRouter(cfg *config.Config, db *gorm.DB) *gin.Engine {
 				})
 			})
 
+			admin.GET("/profile", profileHandler.GetAdminProfile)
+			admin.PUT("/profile", profileHandler.UpdateAdminProfile)
+
+			admin.GET("/tech-stacks", techStackHandler.GetTechStacks)
+			admin.GET("/tech-stacks/:id", techStackHandler.GetTechStackByID)
+			admin.POST("/tech-stacks", techStackHandler.CreateTechStack)
+			admin.PUT("/tech-stacks/:id", techStackHandler.UpdateTechStack)
+			admin.DELETE("/tech-stacks/:id", techStackHandler.DeleteTechStack)
+
 			admin.GET("/projects", projectHandler.GetAdminProjects)
 			admin.GET("/projects/:id", projectHandler.GetAdminProjectByID)
 			admin.POST("/projects", middleware.BodySizeLimit(1<<20), projectHandler.CreateAdminProject)
 			admin.PUT("/projects/:id", middleware.BodySizeLimit(1<<20), projectHandler.UpdateAdminProject)
 			admin.DELETE("/projects/:id", projectHandler.DeleteAdminProject)
+
+			admin.GET("/experiences", experienceHandler.GetAdminExperiences)
+			admin.GET("/experiences/:id", experienceHandler.GetAdminExperienceByID)
+			admin.POST("/experiences", experienceHandler.CreateAdminExperience)
+			admin.PUT("/experiences/:id", experienceHandler.UpdateAdminExperience)
+			admin.DELETE("/experiences/:id", experienceHandler.DeleteAdminExperience)
+
+			admin.GET("/achievements", achievementHandler.GetAdminAchievements)
+			admin.GET("/achievements/:id", achievementHandler.GetAdminAchievementByID)
+			admin.POST("/achievements", achievementHandler.CreateAdminAchievement)
+			admin.PUT("/achievements/:id", achievementHandler.UpdateAdminAchievement)
+			admin.DELETE("/achievements/:id", achievementHandler.DeleteAdminAchievement)
+
+			admin.GET("/skills", skillHandler.GetAdminSkills)
+			admin.GET("/skills/:id", skillHandler.GetAdminSkillByID)
+			admin.POST("/skills", skillHandler.CreateAdminSkill)
+			admin.PUT("/skills/:id", skillHandler.UpdateAdminSkill)
+			admin.DELETE("/skills/:id", skillHandler.DeleteAdminSkill)
+
+			admin.GET("/contact/messages", contactHandler.GetAdminMessages)
+			admin.GET("/contact/messages/:id", contactHandler.GetAdminMessageByID)
+			admin.PATCH("/contact/messages/:id/read", contactHandler.MarkMessageAsRead)
+			admin.DELETE("/contact/messages/:id", contactHandler.DeleteAdminMessage)
+			admin.GET("/contact/unread-count", contactHandler.GetUnreadCount)
 
 			if uploadHandler != nil {
 				admin.POST("/uploads/images", middleware.BodySizeLimit(10<<20), uploadHandler.UploadImage)

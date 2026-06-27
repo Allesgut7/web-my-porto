@@ -1,6 +1,7 @@
 import type { Config } from 'tailwindcss'
 
 export default <Partial<Config>>{
+  darkMode: 'class',
   content: [
     './app/components/**/*.{vue,js,ts}',
     './app/layouts/**/*.vue',
@@ -15,10 +16,11 @@ export default <Partial<Config>>{
         brand: {
           primary: '#1D4ED8',
           soft: '#EFF6FF',
+          light: '#DBEAFE',
         },
         accent: {
-          main: '#F59E0B',
           tech: '#06B6D4',
+          soft: '#ECFEFF',
         },
         app: {
           background: '#F8FAFC',
@@ -31,10 +33,10 @@ export default <Partial<Config>>{
         domain: {
           ee: '#1D4ED8',
           iot: '#06B6D4',
-          data: '#F59E0B',
+          data: '#06B6D4',
           backend: '#1D4ED8',
           ml: '#06B6D4',
-          qa: '#F59E0B',
+          qa: '#06B6D4',
         },
       },
       fontFamily: {
@@ -51,7 +53,6 @@ export default <Partial<Config>>{
         'navbar-scrolled': '0 8px 32px rgba(15, 23, 42, 0.08), 0 2px 8px rgba(15, 23, 42, 0.04)',
         'glow-blue': '0 0 30px rgba(29, 78, 216, 0.2), 0 0 60px rgba(29, 78, 216, 0.1)',
         'glow-cyan': '0 0 30px rgba(6, 182, 212, 0.2), 0 0 60px rgba(6, 182, 212, 0.1)',
-        'glow-amber': '0 0 30px rgba(245, 158, 11, 0.2), 0 0 60px rgba(245, 158, 11, 0.1)',
         'glow-blue-lg': '0 0 40px rgba(29, 78, 216, 0.25), 0 0 80px rgba(29, 78, 216, 0.12), 0 4px 20px rgba(29, 78, 216, 0.15)',
         'glow-cyan-lg': '0 0 40px rgba(6, 182, 212, 0.25), 0 0 80px rgba(6, 182, 212, 0.12)',
         'inner-glow': 'inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 0 20px rgba(29, 78, 216, 0.05)',
@@ -126,7 +127,7 @@ export default <Partial<Config>>{
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'hero-gradient': 'linear-gradient(135deg, rgba(29, 78, 216, 0.06) 0%, rgba(6, 182, 212, 0.04) 50%, rgba(245, 158, 11, 0.03) 100%)',
+        'hero-gradient': 'linear-gradient(135deg, rgba(29, 78, 216, 0.06) 0%, rgba(6, 182, 212, 0.04) 50%, rgba(29, 78, 216, 0.02) 100%)',
       },
     },
   },

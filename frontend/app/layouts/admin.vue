@@ -1,8 +1,13 @@
 <script setup lang="ts">
+const { initDarkMode } = useDarkMode()
+
+onMounted(() => {
+  initDarkMode()
+})
 </script>
 
 <template>
-  <div class="min-h-screen bg-app-background text-app-text">
+  <div class="min-h-screen bg-app-background text-app-text dark:bg-slate-950 dark:text-slate-100">
     <div class="flex min-h-screen">
       <AdminSidebar />
 

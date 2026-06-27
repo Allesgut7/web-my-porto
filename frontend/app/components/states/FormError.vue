@@ -18,18 +18,18 @@ const shouldShow = computed(() => {
     v-if="shouldShow"
     role="alert"
     aria-live="assertive"
-    class="rounded-2xl border border-red-100 bg-red-50 p-4"
+    class="rounded-2xl border border-red-100 dark:border-red-900 bg-red-50 dark:bg-red-950 p-4"
   >
     <p
       v-if="message"
-      class="text-sm font-semibold text-red-700"
+      class="text-sm font-semibold text-red-700 dark:text-red-400"
     >
       {{ message }}
     </p>
 
     <ul
       v-if="hasErrors"
-      class="mt-2 list-disc space-y-1 pl-5 text-sm text-red-700"
+      class="mt-2 list-disc space-y-1 pl-5 text-sm text-red-700 dark:text-red-400"
     >
       <li
         v-for="(error, field) in errors"

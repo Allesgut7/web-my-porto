@@ -6,6 +6,13 @@ const isScrolled = ref(false)
 const scrollProgress = ref(0)
 const drawerRef = ref<HTMLElement | null>(null)
 
+const { t, locale, toggleLocale, initLocale } = useI18n()
+const { isDark, toggleDark } = useDarkMode()
+
+onMounted(() => {
+  initLocale()
+})
+
 const { data: profile } = useProfile({
   lazy: true,
 })
@@ -24,15 +31,15 @@ const firstLetter = computed(() => {
 const navItems = [
   { label: 'Home', to: '/' },
   { label: 'Projects', to: '/projects' },
-  { label: 'About', to: '/#about' },
-  { label: 'Contact', to: '/#contact' },
+  { label: 'About', to: '/about' },
+  { label: 'Contact', to: '/contact' },
 ]
 
 const mobileMenuItems = [
   { label: 'Home', to: '/', icon: 'home' },
   { label: 'Projects', to: '/projects', icon: 'projects' },
-  { label: 'About', to: '/#about', icon: 'about' },
-  { label: 'Contact', to: '/#contact', icon: 'contact' },
+  { label: 'About', to: '/about', icon: 'about' },
+  { label: 'Contact', to: '/contact', icon: 'contact' },
 ]
 
 function closeMenu() {
@@ -42,6 +49,8 @@ function closeMenu() {
 function isActive(path: string) {
   if (path === '/') return route.path === '/'
   if (path.startsWith('/projects')) return route.path.startsWith('/projects')
+  if (path === '/about') return route.path === '/about'
+  if (path === '/contact') return route.path === '/contact'
   return false
 }
 
@@ -115,9 +124,8 @@ onUnmounted(() => {
     />
     <!-- Inner glass highlight — top edge -->
     <div
-      class="absolute top-0 left-0 right-0 h-px pointer-events-none transition-opacity duration-500"
+      class="navbar-glass-highlight absolute top-0 left-0 right-0 h-px pointer-events-none transition-opacity duration-500"
       :class="isScrolled ? 'opacity-100' : 'opacity-0'"
-      style="background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.8) 20%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0.8) 80%, transparent 100%);"
     />
     <!-- Bottom accent line — animated gradient -->
     <div
@@ -128,7 +136,7 @@ onUnmounted(() => {
     />
     <div
       class="navbar-container relative grid grid-cols-[auto_1fr_auto] items-center gap-4 transition-all duration-500 ease-out"
-      :class="isScrolled ? 'bg-white/60 backdrop-blur-xl' : 'bg-gradient-to-r from-white/90 via-white/80 to-white/90 backdrop-blur-md'"
+      :class="isScrolled ? 'bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl' : 'bg-gradient-to-r from-white/90 dark:from-slate-900/90 via-white/80 dark:via-slate-900/80 to-white/90 dark:to-slate-900/90 backdrop-blur-md'"
       :style="{ height: `${80 - scrollProgress * 16}px` }"
     >
       <!-- Logo — Monogram + Name -->
@@ -146,8 +154,8 @@ onUnmounted(() => {
           </div>
         </div>
         <!-- Name -->
-        <span class="text-xl font-bold tracking-tight text-app-text font-display transition-colors duration-300 group-hover:text-brand-primary">
-          {{ firstName }}<span class="text-app-muted font-normal transition-colors duration-300 group-hover:text-brand-primary/60">.dev</span>
+        <span class="text-xl font-bold tracking-tight text-app-text dark:text-slate-50 font-display transition-colors duration-300 group-hover:text-brand-primary">
+          {{ firstName }}<span class="text-app-muted dark:text-slate-400 font-normal transition-colors duration-300 group-hover:text-brand-primary/60">.dev</span>
         </span>
       </NuxtLink>
 
@@ -157,10 +165,10 @@ onUnmounted(() => {
           v-for="item in navItems"
           :key="item.label"
           :to="item.to"
-          class="relative rounded-full px-5 py-2.5 text-[15px] font-medium transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:text-app-text hover:scale-105 hover:-translate-y-0.5 active:scale-95"
+          class="relative rounded-full px-5 py-2.5 text-[15px] font-medium transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:text-app-text dark:hover:text-slate-50 hover:scale-105 hover:-translate-y-0.5 active:scale-95"
           :class="isActive(item.to)
-            ? 'text-brand-primary bg-brand-soft shadow-sm'
-            : 'text-app-muted hover:bg-slate-50/80'"
+            ? 'text-brand-primary bg-brand-soft dark:bg-blue-950 shadow-sm'
+            : 'text-app-muted dark:text-slate-400 hover:bg-slate-50/80 dark:hover:bg-slate-800/80'"
         >
           {{ item.label }}
           <!-- Active pill indicator -->
@@ -173,12 +181,31 @@ onUnmounted(() => {
 
       <!-- Desktop Actions -->
       <div class="hidden items-center justify-end gap-3 md:flex">
+        <!-- Dark Mode Toggle -->
+        <button
+          type="button"
+          class="flex items-center gap-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-semibold text-app-muted dark:text-slate-400 transition-all duration-200 hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
+          @click="toggleDark"
+        >
+          <span class="text-sm">{{ isDark ? '☀️' : '🌙' }}</span>
+        </button>
+
+        <!-- Language Toggle -->
+        <button
+          type="button"
+          class="flex items-center gap-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-semibold text-app-muted dark:text-slate-400 transition-all duration-200 hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
+          @click="toggleLocale"
+        >
+          <span class="text-sm">🌐</span>
+          {{ locale === 'en' ? 'ID' : 'EN' }}
+        </button>
+
         <a
           v-if="profile?.githubUrl"
           :href="safeUrl(profile.githubUrl) || undefined"
           target="_blank"
           rel="noopener noreferrer"
-          class="flex items-center gap-2 rounded-full px-4 py-3 text-[15px] font-medium text-app-muted transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:bg-slate-100 hover:text-app-text hover:scale-105 hover:-translate-y-0.5 active:scale-95"
+          class="flex items-center gap-2 rounded-full px-4 py-3 text-[15px] font-medium text-app-muted dark:text-slate-400 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-app-text dark:hover:text-slate-50 hover:scale-105 hover:-translate-y-0.5 active:scale-95"
         >
           <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
             <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
@@ -207,24 +234,24 @@ onUnmounted(() => {
       <!-- Mobile Hamburger -->
       <button
         type="button"
-        class="relative inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-app-border bg-white text-app-text transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:border-brand-primary hover:shadow-glow-blue hover:scale-105 active:scale-95 md:hidden"
+        class="relative inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-app-border dark:border-slate-700 bg-white dark:bg-slate-800 text-app-text dark:text-slate-50 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:border-brand-primary hover:shadow-glow-blue hover:scale-105 active:scale-95 md:hidden"
         :class="isOpen ? 'border-brand-primary shadow-glow-blue' : ''"
         aria-label="Toggle navigation menu"
         :aria-expanded="isOpen"
         @click="isOpen = !isOpen"
       >
         <!-- Animated hamburger lines -->
-        <div class="flex flex-col items-center justify-center gap-1.5 transition-all duration-500" :class="isOpen ? 'rotate-90' : ''">
+        <div class="flex flex-col items-center justify-center gap-1.5 transition-all duration-500">
           <span
-            class="block h-[3px] w-6 rounded-full bg-app-text transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+            class="block h-[3px] w-6 rounded-full bg-app-text dark:bg-slate-50 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
             :class="isOpen ? 'translate-y-[4px] rotate-45 bg-brand-primary' : ''"
           />
           <span
-            class="block h-[3px] w-6 rounded-full bg-app-text transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+            class="block h-[3px] w-6 rounded-full bg-app-text dark:bg-slate-50 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
             :class="isOpen ? 'scale-x-0 opacity-0' : ''"
           />
           <span
-            class="block h-[3px] w-6 rounded-full bg-app-text transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+            class="block h-[3px] w-6 rounded-full bg-app-text dark:bg-slate-50 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
             :class="isOpen ? '-translate-y-[4px] -rotate-45 bg-brand-primary' : ''"
           />
         </div>
@@ -252,21 +279,21 @@ onUnmounted(() => {
         role="dialog"
         aria-modal="true"
         aria-label="Navigation menu"
-        class="fixed inset-y-0 right-0 z-[70] flex w-80 flex-col bg-gradient-to-b from-white to-slate-50 shadow-deep md:hidden rounded-l-3xl"
+        class="fixed inset-y-0 right-0 z-[70] flex w-80 flex-col bg-gradient-to-b from-white dark:from-slate-900 to-slate-50 dark:to-slate-950 shadow-deep md:hidden rounded-l-3xl"
       >
         <!-- Drawer Header -->
-        <div class="flex items-center justify-between border-b border-app-border/50 px-6 py-5">
+        <div class="flex items-center justify-between border-b border-app-border/50 dark:border-slate-800/50 px-6 py-5">
           <div class="flex items-center gap-3">
             <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 text-white font-bold font-display text-sm">
               {{ firstLetter }}
             </div>
-            <span class="text-lg font-bold text-app-text font-display">
-              {{ firstName }}<span class="text-app-muted font-normal">.dev</span>
+            <span class="text-lg font-bold text-app-text dark:text-slate-50 font-display">
+              {{ firstName }}<span class="text-app-muted dark:text-slate-400 font-normal">.dev</span>
             </span>
           </div>
           <button
             type="button"
-            class="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-app-border text-app-muted transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:bg-red-50 hover:border-red-200 hover:text-red-500 hover:rotate-90 hover:scale-110 active:scale-95"
+            class="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-app-border dark:border-slate-700 text-app-muted dark:text-slate-400 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:bg-red-50 dark:hover:bg-red-950 hover:border-red-200 dark:hover:border-red-900 hover:text-red-500 hover:rotate-90 hover:scale-110 active:scale-95"
             aria-label="Close menu"
             @click="closeMenu"
           >
@@ -283,10 +310,10 @@ onUnmounted(() => {
               v-for="(item, index) in mobileMenuItems"
               :key="item.label"
               :to="item.to"
-              class="flex items-center gap-3.5 rounded-2xl px-4 py-4 text-[15px] font-medium transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] navbar-stagger-item hover:translate-x-1 hover:bg-slate-100 active:scale-[0.98]"
+              class="flex items-center gap-3.5 rounded-2xl px-4 py-4 text-[15px] font-medium transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] navbar-stagger-item hover:translate-x-1 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-[0.98]"
               :class="isActive(item.to)
-                ? 'bg-brand-soft text-brand-primary'
-                : 'text-app-muted hover:bg-slate-50 hover:text-app-text'"
+                ? 'bg-brand-soft dark:bg-blue-950 text-brand-primary'
+                : 'text-app-muted dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-app-text dark:hover:text-slate-50'"
               :style="{ animationDelay: `${index * 60 + 100}ms` }"
               @click="closeMenu"
             >
@@ -295,7 +322,7 @@ onUnmounted(() => {
                 class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors duration-300"
                 :class="isActive(item.to)
                   ? 'bg-brand-primary/10 text-brand-primary'
-                  : 'bg-slate-100 text-app-muted'"
+                  : 'bg-slate-100 dark:bg-slate-800 text-app-muted dark:text-slate-400'"
               >
                 <!-- Home -->
                 <svg v-if="item.icon === 'home'" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -329,8 +356,21 @@ onUnmounted(() => {
             </NuxtLink>
           </div>
 
+          <!-- Dark Mode Toggle -->
+          <button
+            type="button"
+            class="flex items-center gap-3.5 rounded-2xl px-4 py-4 text-[15px] font-medium text-app-muted dark:text-slate-400 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-app-text dark:hover:text-slate-50 hover:translate-x-1 active:scale-[0.98] navbar-stagger-item"
+            style="animation-delay: 380ms;"
+            @click="toggleDark"
+          >
+            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-app-muted dark:text-slate-400">
+              <span class="text-base">{{ isDark ? '☀️' : '🌙' }}</span>
+            </span>
+            {{ isDark ? 'Light Mode' : 'Dark Mode' }}
+          </button>
+
           <!-- Divider -->
-          <div class="my-6 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+          <div class="my-6 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-700 to-transparent" />
 
           <!-- GitHub Link -->
           <a
@@ -338,24 +378,24 @@ onUnmounted(() => {
             :href="safeUrl(profile.githubUrl) || undefined"
             target="_blank"
             rel="noopener noreferrer"
-            class="flex items-center gap-3.5 rounded-2xl px-4 py-4 text-[15px] font-medium text-app-muted transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:bg-slate-100 hover:text-app-text hover:translate-x-1 active:scale-[0.98] navbar-stagger-item"
+            class="flex items-center gap-3.5 rounded-2xl px-4 py-4 text-[15px] font-medium text-app-muted dark:text-slate-400 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-app-text dark:hover:text-slate-50 hover:translate-x-1 active:scale-[0.98] navbar-stagger-item"
             style="animation-delay: 440ms;"
             @click="closeMenu"
           >
-            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-app-muted">
+            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-app-muted dark:text-slate-400">
               <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
                 <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
               </svg>
             </span>
             GitHub Profile
-            <svg class="ml-auto h-3.5 w-3.5 text-app-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <svg class="ml-auto h-3.5 w-3.5 text-app-muted dark:text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>
           </a>
         </nav>
 
         <!-- Drawer Footer — CV Button -->
-        <div class="border-t border-app-border px-4 py-5">
+        <div class="border-t border-app-border dark:border-slate-800 px-4 py-5">
           <a
             v-if="profile?.cvUrl"
             :href="safeUrl(profile.cvUrl) || undefined"
