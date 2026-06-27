@@ -2,6 +2,8 @@
 .env
 backend/.env
 frontend/.env
+backend/.env.production
+frontend/.env.production
 
 # Allow example files
 !.env.example
@@ -44,3 +46,9 @@ docker-compose.override.yml
 # Cookies / sensitive temp files
 cookies.txt
 **/cookies.txt
+
+# SSL certificates
+nginx/ssl/
+*.pem
+*.key
+*.crt

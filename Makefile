@@ -2,7 +2,13 @@
 MIGRATIONS_PATH=backend/migrations
 DATABASE_URL ?= postgres://postgres:postgres@localhost:5433/web-my-porto?sslmode=disable
 
-.PHONY: backend-dev frontend-dev docker-up docker-down docker-logs docker-build db-shell health migrate-up migrate-down migrate-down-one migrate-version migrate-force seed
+.PHONY: backend-dev frontend-dev docker-up docker-down docker-logs docker-build db-shell health \
+       migrate-up migrate-down migrate-down-one migrate-version migrate-force seed \
+       prod-up prod-down prod-logs prod-build prod-restart prod-db-shell
+
+# ====================
+# Development
+# ====================
 
 backend-dev:
 	cd backend && go run ./cmd/api
@@ -28,6 +34,34 @@ db-shell:
 health:
 	curl http://localhost:8080/api/health
 
+# ====================
+# Production
+# ====================
+
+prod-up:
+	docker compose -f docker-compose.yml -f docker-compose.production.yml up -d
+
+prod-build:
+	docker compose -f docker-compose.yml -f docker-compose.production.yml up -d --build
+
+prod-down:
+	docker compose -f docker-compose.yml -f docker-compose.production.yml down
+
+prod-logs:
+	docker compose -f docker-compose.yml -f docker-compose.production.yml logs -f
+
+prod-restart:
+	docker compose -f docker-compose.yml -f docker-compose.production.yml restart
+
+prod-db-shell:
+	docker exec -it web_my_porto_postgres psql -U webporto -d web-my-porto
+
+deploy:
+	./deploy.sh
+
+# ====================
+# Migrations
+# ====================
 
 migrate-up:
 	migrate -path $(MIGRATIONS_PATH) -database "$(DATABASE_URL)" up

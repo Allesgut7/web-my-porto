@@ -1,0 +1,33 @@
+services:
+  postgres:
+    environment:
+      POSTGRES_USER: webporto
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-TTjO6neTs2WpXSYdVYcKA236jRzNJ9Sa}
+      POSTGRES_DB: web-my-porto
+    ports: []
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U webporto -d web-my-porto"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    env_file:
+      - ./backend/.env.production
+    ports: []
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    env_file:
+      - ./frontend/.env.production
+    ports: []
+
+  nginx:
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
